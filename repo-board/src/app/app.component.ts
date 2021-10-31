@@ -53,7 +53,7 @@ export class AppComponent {
 
       if (repo.branches?.length > 1) {
         repo.pullRequests = await this.gitClient.getPullRequests(gitRepository.id, { status: PullRequestStatus.Active } as GitPullRequestSearchCriteria);
-
+        
       }
     } catch (e) {
       console.error(e);
