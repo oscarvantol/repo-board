@@ -1,0 +1,11 @@
+<div *ngFor="let repo of repos" class="card">
+  <div class="card-head">{{repo.gitRepository.name}}</div>
+  <div class="card-detail">default branch: {{repo.gitRepository.defaultBranch}}</div>
+
+  <div class="card-head"><strong>branches</strong></div>
+  <div *ngFor="let branch of repo.branches" class="card-detail">{{branch.name}}</div>
+
+  <div *ngIf="repo.pullRequests.length > 0" class="card-head">pull requests</div>
+  <div *ngFor="let pullRequest of repo.pullRequests" class="card-detail">{{pullRequest.sourceRefName}} into
+      {{pullRequest.targetRefName}} </div>
+</div>

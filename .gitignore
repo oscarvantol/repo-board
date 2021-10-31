@@ -348,3 +348,7 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+
+# app dist
+repo-board/extension/app/
+repo-board/extension/dist
