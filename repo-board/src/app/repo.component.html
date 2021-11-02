@@ -1,0 +1,32 @@
+<div class="repo">
+    <div class="header">
+        <span class="ms-Icons"><span aria-hidden="true" class="ms-Icon--GitLogo"></span></span>
+        <span class="title">{{gitRepository.name}}</span>
+        <span class="badge">{{gitRepository.defaultBranch}}</span>
+    </div>
+
+    <div class="container" *ngFor="let branch of gitBranches">
+        <div class="item-branch">
+            <div>
+                <span class="ms-Icons"><span aria-hidden="true" class="ms-Icon--Branch"></span></span><a
+                    href="" target="_top">{{branch.name}}</a>
+            </div>
+            <div>{{branch.commit.author.name}} {{branch.commit.author.date}}</div>
+        </div>
+
+        <div *ngIf="getPullRequest(branch.name) let pr else elseBlock" class="item-pullrequest">
+            <div><span class="ms-Icons"><span aria-hidden="true" class="ms-Icon--PullRequest"></span></span>
+                <a [href]="getUrlForPullRequest(pr.pullRequestId)" target="_top">{{pr.title}}</a></div>
+            <div>into {{pr.targetRefName}}</div>
+            <div>{{pr.status}}</div>
+        </div>
+
+        <ng-template #elseBlock>
+            <div class="item-pullrequest">
+                <div><span class="ms-Icons"><span aria-hidden="true" class="ms-Icon--PullRequest"></span></span>
+                    <a [href]="getUrlNewPullRequest(branch.name)" target="_top">Create new Pull Request</a></div>
+            </div>
+        </ng-template>
+    </div>
+
+</div>
