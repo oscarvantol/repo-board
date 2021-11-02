@@ -9,7 +9,7 @@
         <div class="item-branch">
             <div>
                 <span class="ms-Icons"><span aria-hidden="true" class="ms-Icon--Branch"></span></span><a
-                    href="" target="_top">{{branch.name}}</a>
+                    [href]="getUrlForBranch()" target="_top">{{branch.name}}</a>
             </div>
             <div>{{branch.commit.author.name}} {{branch.commit.author.date}}</div>
         </div>

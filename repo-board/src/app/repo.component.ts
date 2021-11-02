@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import * as SDK from "azure-devops-extension-sdk";
-import { getClient, CommonServiceIds, ILocationService } from "azure-devops-extension-api";
+import { getClient } from "azure-devops-extension-api";
 import { GitRestClient, PullRequestStatus, GitPullRequest, GitRepository, GitBranchStats, GitPullRequestSearchCriteria } from "azure-devops-extension-api/Git";
 import * as _ from 'lodash';
 
@@ -17,12 +17,6 @@ export class RepoComponent implements OnInit {
         defaultBranch: "main"
     } as GitRepository;
 
-    @Input('organization')
-    organization: string = "dummy";
-
-    @Input('project')
-    project: string = "dummy";
-
     gitClient?: GitRestClient;
     gitBranches: GitBranchStats[] = [];
     pullRequests: GitPullRequest[] = [];
@@ -32,9 +26,6 @@ export class RepoComponent implements OnInit {
         this.gitClient = getClient(GitRestClient);
         this.gitBranches = _.filter(await this.gitClient.getBranches(this.gitRepository.id), (b) => `refs/heads/${b.name}` !== this.gitRepository.defaultBranch);
         this.pullRequests = await this.gitClient.getPullRequests(this.gitRepository.id, { status: PullRequestStatus.Active } as GitPullRequestSearchCriteria);
-        let locationService = await SDK.getService<ILocationService>(CommonServiceIds.LocationService);
-        console.log({ getResourceAreaLocation: await locationService.getResourceAreaLocation("git") });
-        this.organization = await locationService.routeUrl("", {});
     }
 
     getPullRequest(branchName: string): GitPullRequest | undefined {
@@ -42,12 +33,16 @@ export class RepoComponent implements OnInit {
         return result;
     }
 
+    getUrlForBranch(): string {
+        return this.gitRepository.webUrl;
+    }
+
     getUrlForPullRequest(pullRequestId: number): string {
-        return `${this.organization}/${this.project}/_git/${this.gitRepository.name}/pullrequest/${pullRequestId}`;
+        return `${this.gitRepository.webUrl}/pullrequest/${pullRequestId}`;
     }
 
     getUrlNewPullRequest(branchName: string): string {
-        return `${this.organization}/${this.project}/_git/${this.gitRepository.name}/pullrequestcreate?sourceRef=refs/heads/${branchName}`;
+        return `${this.gitRepository.webUrl}/pullrequestcreate?sourceRef=${branchName}`;
     }
 
 }

@@ -2,9 +2,9 @@
     "manifestVersion": 1,
     "id": "repo-board",
     "publisher": "ovantol",
-    "version": "0.0.5",
+    "version": "0.0.9",
     "name": "repo-board",
-    "description": "Git repository overview for Azure DevOps",
+    "description": "Git repository and pull request overview for Azure DevOps",
     "demands": ["api-version/5.0"],
     "scopes": ["vso.code_manage"],
     "public": false,
@@ -39,6 +39,10 @@
             "path": "app",
             "addressable": true,
             "packagePath": "app"
+        },
+        {
+            "path": "images/repo-board.png",
+            "addressable": true
         }       
     ]
 }
