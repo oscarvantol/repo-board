@@ -1,7 +1,7 @@
 <div class="repo" [class.no-branches]="gitBranches?.length === 0">
     <div class="header">
         <span class="ms-Icons"><span aria-hidden="true" class="ms-Icon--GitLogo"></span></span>
-        <a class="title" [href]="gitRepository.webUrl">{{gitRepository.name}}</a>
+        <a class="title" [href]="gitRepository.webUrl" target="_top">{{gitRepository.name}}</a>
         <span class="badge">{{gitRepository.defaultBranch.replace('refs/heads/', '')}}</span>
     </div>
 
@@ -16,7 +16,7 @@
                 <span>Author: {{branch.commit.author.name}}</span>
             </div>
             <div>
-                <span>Date: {{formatDate(branch.commit.author.date)}}</span>
+                <span>Date: {{branch.commit.author.date | date:'mediumDate'}}</span>
             </div>
         </div>
 

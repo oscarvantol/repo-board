@@ -29,7 +29,7 @@ a {
 }
 
 .repo {
-    background-color: #fff;
+    background-color: var(--background-color);
     border: 0;
     border-radius: 4px;
     box-shadow: 0 3.2px 7.2px 0 var(--callout-shadow-color, rgba(0, 0, 0, .132)), 0 0.6px 1.8px 0 var(--callout-shadow-secondary-color, rgba(0, 0, 0, .108));
@@ -90,14 +90,14 @@ a {
                 &.new {
                     padding: 4px;
                     margin-right: 8px;
-                    background-color: var(--palette-black-alpha-6, rgba(0, 0, 0, .06));
+                    background-color: rgba(var(--palette-neutral-6,239, 239, 239),1);
                     padding: 8px 16px;
                     text-decoration: none;
                     color: black;
                     font-weight: 600;
                     &:hover {
                         background-color: rgba(0, 0, 0, .1);
-                        background-color: var(--palette-black-alpha-10, rgba(0, 0, 0, .1));
+                        background-color: var(--communication-background,rgba(0, 120, 212, 1))
                     }
                 }
             }
