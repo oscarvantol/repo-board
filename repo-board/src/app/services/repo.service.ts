@@ -16,10 +16,9 @@ export class RepoService {
     return document.domain !== "localhost";
   }
 
-  private _branches: any = {};
+  private _branches: GitBranchStats[] = [];
   private _pullRequests: GitPullRequest[] = [];
   private _gitClient?: GitRestClient;
-  // private _projectService?: IProjectPageService;
   public gitRepositories$: Observable<GitRepository[]> = of([]);
 
   constructor() {
@@ -27,7 +26,7 @@ export class RepoService {
       SDK.init();
   }
 
-  public initialize = async() => this.online
+  public initialize = async () => this.online
     ? this.initOnline()
     : this.initOffline();
 
@@ -37,7 +36,7 @@ export class RepoService {
       const gitClient = getClient(GitRestClient);
       gitBranches = await gitClient.getBranches(gitRepository.id);
     } else {
-      gitBranches = this._branches[gitRepository.id] ?? [];
+      gitBranches = this._branches;
     }
 
     return gitBranches.filter((b) => `refs/heads/${b.name}` !== gitRepository.defaultBranch);
@@ -51,7 +50,7 @@ export class RepoService {
     } else {
       pullRequests = this._pullRequests.filter(pr => pr.repository.id === gitRepository.id);
     }
-    
+
     return pullRequests;
   }
 
@@ -68,16 +67,17 @@ export class RepoService {
   }
 
   private async initOffline() {
+
     const gitRepositories = RepositoriesJson as any as GitRepository[];
     this.gitRepositories$ = of(this.getSortedList(gitRepositories));
 
-    this._branches = BranchesJson;
+    this._branches = BranchesJson as any as GitBranchStats[];
     this._pullRequests = PullRequestsJson as any as GitPullRequest[];
   }
 
   private getSortedList = (repos: GitRepository[]) =>
     repos.sort((r1, r2) => {
-      const [ name1, name2 ] = [r1.name?.toLocaleLowerCase(), r2.name?.toLocaleLowerCase() ];
+      const [name1, name2] = [r1.name?.toLocaleLowerCase(), r2.name?.toLocaleLowerCase()];
       if (name1 > name2) return 1;
       if (name1 < name2) return -1;
       return 0;

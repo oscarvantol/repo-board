@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { GitPullRequest, GitRepository, GitBranchStats, PullRequestStatus } from "azure-devops-extension-api/Git";
 import { RepoService } from './services/repo.service';
 
@@ -23,14 +23,6 @@ export class RepoComponent implements OnInit {
     async ngOnInit() {
         this.gitBranches = await this.repoService.getBranches(this.gitRepository);
         this.pullRequests = await this.repoService.getPullRequests(this.gitRepository);
-    }
-
-    public formatDate(jsonDate: Date) {
-        const dateOptions: Intl.DateTimeFormatOptions = { day: '2-digit', month: '2-digit', year: 'numeric' };
-        const timeOptions: Intl.DateTimeFormatOptions = { hour: '2-digit', minute: '2-digit' };
-        const dateTimeOptions = { ...timeOptions, ...dateOptions };      
-        const date = new Date(parseInt(jsonDate.toString().substr(6)));
-        return date.toLocaleDateString("nl-NL", dateTimeOptions);
     }
 
     getPullRequest(branchName: string): GitPullRequest | undefined {
