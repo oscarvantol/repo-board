@@ -81,7 +81,7 @@ a {
             padding: 0;
             .pr {
                 background: none;
-                color: rgb(var(--palette-primary-shade-10, 0, 90, 158));
+                color: var(--text-primary-color,rgba(0, 0, 0, .9));
                 font-weight: normal;
                 margin: 0;
                 margin-right: 4px;
@@ -93,7 +93,6 @@ a {
                     background-color: rgba(var(--palette-neutral-6,239, 239, 239),1);
                     padding: 8px 16px;
                     text-decoration: none;
-                    color: black;
                     font-weight: 600;
                     &:hover {
                         background-color: rgba(0, 0, 0, .1);
@@ -104,48 +103,3 @@ a {
         }
     }
 }
-
-
-/*
-.repo {
-    font-family: "Segoe UI VSS (Regular)","Segoe UI","-apple-system",BlinkMacSystemFont,Roboto,"Helvetica Neue",Helvetica,Ubuntu,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
-    margin-bottom: 10px;
-    background-color: var(--palette-black-alpha-6);
-    border-radius: 6px;
-    padding: 5px;
-    box-shadow: 3px 3px 4px 0px var(--palette-black-alpha-2);
-}
-
-.repo .header {
-    padding: 5px;
-}
-
-.repo .header .title{
-    display: inline;
-    margin: 0px 5px;
-    font-weight: bolder;
-    font-size: 1.2em;
-}
-
-.container {
-    display: flex;
-    border-top: solid 1px var(--component-grid-cell-bottom-border-color);
-}
-
-.item-branch {
-    padding: 4px;
-    flex-basis: 40%;
-
-}
-
-.item-pullrequest {
-    padding: 4px;
-    flex-basis: 60%;
-}
-
-.badge {
-    border-radius: 4px;
-    border: solid 1px #808080;
-    padding: 3px 6px;
-}
-*/
