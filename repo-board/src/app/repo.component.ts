@@ -26,8 +26,7 @@ export class RepoComponent implements OnInit {
     }
 
     getPullRequest(branchName: string): GitPullRequest | undefined {
-        let result = this.pullRequests.find(pr => pr.sourceRefName === `refs/heads/${branchName}`);
-        return result;
+        return this.pullRequests.find(pr => pr.sourceRefName === `refs/heads/${branchName}`);
     }
 
     getStatus(status: PullRequestStatus) {
