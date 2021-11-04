@@ -1,32 +1,40 @@
-<div class="repo">
+<div class="repo" [class.no-branches]="gitBranches?.length === 0">
     <div class="header">
         <span class="ms-Icons"><span aria-hidden="true" class="ms-Icon--GitLogo"></span></span>
-        <span class="title">{{gitRepository.name}}</span>
-        <span class="badge">{{gitRepository.defaultBranch}}</span>
+        <a class="title" [href]="gitRepository.webUrl">{{gitRepository.name}}</a>
+        <span class="badge">{{gitRepository.defaultBranch.replace('refs/heads/', '')}}</span>
     </div>
 
     <div class="container" *ngFor="let branch of gitBranches">
         <div class="item-branch">
             <div>
-                <span class="ms-Icons"><span aria-hidden="true" class="ms-Icon--Branch"></span></span><a
-                    [href]="getUrlForBranch()" target="_top">{{branch.name}}</a>
+                <span class="ms-Icons"><span aria-hidden="true" class="ms-Icon--Branch"></span></span><a [href]="getUrlForBranch(branch.name)" target="_top">{{branch.name}}</a>
             </div>
-            <div>{{branch.commit.author.name}} {{branch.commit.author.date}}</div>
+            <div>
+                <!-- Avatar? -->
+                <!-- <img class="vss-Persona-content using-image" src="https://dev.azure.com/vv-ops/_apis/GraphProfile/MemberAvatars/msa.ZWQ4OTk4NjEtZjc5OS03NzNjLThiZWUtMGU4MmYyZWE0OGE1" alt=""> -->
+                <span>Author: {{branch.commit.author.name}}</span>
+            </div>
+            <div>
+                <span>Date: {{formatDate(branch.commit.author.date)}}</span>
+            </div>
         </div>
 
         <div *ngIf="getPullRequest(branch.name) let pr else elseBlock" class="item-pullrequest">
-            <div><span class="ms-Icons"><span aria-hidden="true" class="ms-Icon--PullRequest"></span></span>
-                <a [href]="getUrlForPullRequest(pr.pullRequestId)" target="_top">{{pr.title}}</a></div>
-            <div>into {{pr.targetRefName}}</div>
-            <div>{{pr.status}}</div>
+            <div>
+                <span class="ms-Icons">
+                    <span aria-hidden="true" class="ms-Icon--PullRequest"></span>
+                </span>
+                <a [href]="getUrlForPullRequest(pr.pullRequestId)" target="_top">{{pr.title}}</a>
+            </div>
+            <div>Merge into: {{pr.targetRefName?.replace('refs/heads/', '')}}</div>
+            <div class="status">Status: {{getStatus(pr.status)}}</div>
         </div>
 
         <ng-template #elseBlock>
             <div class="item-pullrequest">
-                <div><span class="ms-Icons"><span aria-hidden="true" class="ms-Icon--PullRequest"></span></span>
-                    <a [href]="getUrlNewPullRequest(branch.name)" target="_top">Create new Pull Request</a></div>
+                <a [href]="getUrlNewPullRequest(branch.name)" class="pr new" target="_top" *ngIf="branch.name != 'dev'">Create a pull request</a>
             </div>
         </ng-template>
     </div>
-
 </div>
