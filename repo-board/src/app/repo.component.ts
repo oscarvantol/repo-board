@@ -1,8 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
-import * as SDK from "azure-devops-extension-sdk";
-import { getClient } from "azure-devops-extension-api";
-import { GitRestClient, PullRequestStatus, GitPullRequest, GitRepository, GitBranchStats, GitPullRequestSearchCriteria } from "azure-devops-extension-api/Git";
-import * as _ from 'lodash';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { GitPullRequest, GitRepository, GitBranchStats, PullRequestStatus } from "azure-devops-extension-api/Git";
+import { RepoService } from './services/repo.service';
 
 
 @Component({
@@ -17,24 +15,42 @@ export class RepoComponent implements OnInit {
         defaultBranch: "main"
     } as GitRepository;
 
-    gitClient?: GitRestClient;
     gitBranches: GitBranchStats[] = [];
     pullRequests: GitPullRequest[] = [];
 
+    constructor(public readonly repoService: RepoService) {}
+
     async ngOnInit() {
-        await SDK.ready();
-        this.gitClient = getClient(GitRestClient);
-        this.gitBranches = _.filter(await this.gitClient.getBranches(this.gitRepository.id), (b) => `refs/heads/${b.name}` !== this.gitRepository.defaultBranch);
-        this.pullRequests = await this.gitClient.getPullRequests(this.gitRepository.id, { status: PullRequestStatus.Active } as GitPullRequestSearchCriteria);
+        this.gitBranches = await this.repoService.getBranches(this.gitRepository);
+        this.pullRequests = await this.repoService.getPullRequests(this.gitRepository);
+    }
+
+    public formatDate(jsonDate: Date) {
+        const dateOptions: Intl.DateTimeFormatOptions = { day: '2-digit', month: '2-digit', year: 'numeric' };
+        const timeOptions: Intl.DateTimeFormatOptions = { hour: '2-digit', minute: '2-digit' };
+        const dateTimeOptions = { ...timeOptions, ...dateOptions };      
+        const date = new Date(parseInt(jsonDate.toString().substr(6)));
+        return date.toLocaleDateString("nl-NL", dateTimeOptions);
     }
 
     getPullRequest(branchName: string): GitPullRequest | undefined {
-        let result = _.find(this.pullRequests, { sourceRefName: `refs/heads/${branchName}` });
+        let result = this.pullRequests.find(pr => pr.sourceRefName === `refs/heads/${branchName}`);
         return result;
     }
 
-    getUrlForBranch(): string {
-        return this.gitRepository.webUrl;
+    getStatus(status: PullRequestStatus) {
+        switch (status) {
+            case PullRequestStatus.Abandoned: return "Abandoned";
+            case PullRequestStatus.Active: return "Active";
+            // case PullRequestStatus.All: return "All";
+            case PullRequestStatus.Completed: return "Completed";
+            // case PullRequestStatus.NotSet: return "NotSet";
+        }
+        return "";
+    }
+
+    getUrlForBranch(branchName: string): string {
+        return `${this.gitRepository.webUrl}?version=GB${branchName}`;
     }
 
     getUrlForPullRequest(pullRequestId: number): string {
@@ -44,5 +60,4 @@ export class RepoComponent implements OnInit {
     getUrlNewPullRequest(branchName: string): string {
         return `${this.gitRepository.webUrl}/pullrequestcreate?sourceRef=${branchName}`;
     }
-
 }

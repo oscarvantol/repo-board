@@ -1,3 +1,4 @@
-<div>
-  <git-repo *ngFor="let gitRepository of gitRepositories" [git-repository]="gitRepository"></git-repo>
+<div class="repositories" *ngIf="gitRepositories$ | async as gitRepositories">
+    <h1>Repositories</h1>
+    <git-repo *ngFor="let gitRepository of gitRepositories" [git-repository]="gitRepository"></git-repo>
 </div>
