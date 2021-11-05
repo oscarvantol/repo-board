@@ -12,7 +12,9 @@ a {
 .ms-Icons {
     font-family: "AzureDevOpsMDL2Assets";
     -webkit-font-smoothing: antialiased;
-    margin-right: 10px;
+    margin-right: 3px;
+    top: 2px;
+    position: relative;
 }
 
 .ms-Icon--Branch:before {
@@ -36,6 +38,31 @@ a {
     content: "\F296 ";
 }
 
+.ms-Icon--Approved:before {
+    content: "\EC61 ";
+    color: rgb(var(--palette-accent2-dark, 16, 124, 16));
+}
+
+.ms-Icon--ApprovedWithSuggestions:before {
+    content: "\E930 ";
+    color: rgb(var(--palette-accent2-dark, 16, 124, 16));
+}
+
+.ms-Icon--NoResponse:before {
+    content: "\F138 ";
+}
+
+.ms-Icon--Rejected:before {
+    content: "\EB90 ";
+    color: var(--component-status-error,rgba(205, 74, 69, 1))
+}
+
+.ms-Icon--WaitingForAuthor:before {
+    content: "\ECE4 ";
+    color: rgba(214,127,60,1);
+
+}
+
 .bolt-button {
     &.bolt-icon-button {
         border: 0;
@@ -56,6 +83,14 @@ a {
     display: inline-flex;
     font-family: "AzureDevOpsMDL2Assets";
     -webkit-font-smoothing: antialiased;
+}
+
+.vss-Persona-content {
+    max-height: 20px;
+    max-width: 20px;
+    padding: 0;
+    top: 5px;
+    position: relative;
 }
 
 .repo {

@@ -8,13 +8,16 @@
             <ng-container *ngIf="isFavorite(gitRepository.id); then removeFavorite; else addFavorite"></ng-container>
 
             <ng-template #addFavorite>
-                <button class="bolt-button bolt-icon-button" tabindex="-1" type="button" (click)="toggleFavorite(gitRepository.id)">
+                <button class="bolt-button bolt-icon-button" tabindex="-1" type="button"
+                    (click)="toggleFavorite(gitRepository.id)">
                     <span class="fabric-icon ms-Icon--FavoriteStar"></span>
                 </button>
             </ng-template>
             <ng-template #removeFavorite>
-                <button class="bolt-button bolt-icon-button favorite-star" tabindex="-1" type="button" (click)="toggleFavorite(gitRepository.id)">
-                    <span aria-hidden="true" class="left-icon flex-noshrink fabric-icon ms-Icon--FavoriteStarFill medium"></span>
+                <button class="bolt-button bolt-icon-button favorite-star" tabindex="-1" type="button"
+                    (click)="toggleFavorite(gitRepository.id)">
+                    <span aria-hidden="true"
+                        class="left-icon flex-noshrink fabric-icon ms-Icon--FavoriteStarFill medium"></span>
                 </button>
             </ng-template>
         </div>
@@ -23,16 +26,19 @@
     <div class="container" *ngFor="let branch of gitBranches">
         <div class="item-branch">
             <div>
-                <span class="ms-Icons"><span aria-hidden="true" class="ms-Icon--Branch"></span></span><a [href]="getUrlForBranch(branch.name)" target="_top">{{branch.name}}</a>
+                <span class="ms-Icons"><span aria-hidden="true" class="ms-Icon--Branch"></span></span><a
+                    [href]="getUrlForBranch(branch.name)" target="_top">{{branch.name}}</a>
             </div>
             <div>
                 <!-- Avatar? -->
                 <!-- <img class="vss-Persona-content using-image" src="https://dev.azure.com/vv-ops/_apis/GraphProfile/MemberAvatars/msa.ZWQ4OTk4NjEtZjc5OS03NzNjLThiZWUtMGU4MmYyZWE0OGE1" alt=""> -->
-                <span>Author: {{branch.commit.author.name}}</span>
+                <span>Created by {{branch.commit.author.name}} on {{branch.commit.author.date |
+                    date:'mediumDate'}}</span>
             </div>
             <div>
-                <span>Date: {{branch.commit.author.date | date:'mediumDate'}}</span>
+                <span>{{branch.behindCount}} commits behind, {{branch.aheadCount}} ahead </span>
             </div>
+
         </div>
 
         <div *ngIf="getPullRequest(branch.name) let pr else elseBlock" class="item-pullrequest">
@@ -40,15 +46,24 @@
                 <span class="ms-Icons">
                     <span aria-hidden="true" class="ms-Icon--PullRequest"></span>
                 </span>
-                <a [href]="getUrlForPullRequest(pr.pullRequestId)" target="_top">{{pr.title}}</a>
+                <a [href]="getUrlForPullRequest(pr.pullRequestId)" target="_top">#{{pr.pullRequestId}} {{pr.title}}</a> 
+                
             </div>
-            <div>Merge into: {{pr.targetRefName?.replace('refs/heads/', '')}}</div>
-            <div class="status">Status: {{getStatus(pr.status)}}</div>
+            <div>{{getStatus(pr.status)}} pull request into {{pr.targetRefName?.replace('refs/heads/', '')}}</div>
+
+            <div>
+                <span *ngFor="let reviewer of pr.reviewers"><span
+                        class="ms-Icons {{reviewer.vote | vote}}"></span><span>{{reviewer.displayName}}</span> &nbsp;
+                </span>
+                <!-- <img class="vss-Persona-content using-image" src="{{reviewer._links.avatar.href}}"> -->
+            </div>
+
         </div>
 
         <ng-template #elseBlock>
             <div class="item-pullrequest">
-                <a [href]="getUrlNewPullRequest(branch.name)" class="pr new" target="_top" *ngIf="branch.name != 'dev'">Create a pull request</a>
+                <a [href]="getUrlNewPullRequest(branch.name)" class="pr new" target="_top"
+                    *ngIf="branch.name != 'dev'">Create a pull request</a>
             </div>
         </ng-template>
     </div>
