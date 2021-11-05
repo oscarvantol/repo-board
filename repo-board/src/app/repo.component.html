@@ -30,14 +30,15 @@
                     [href]="getUrlForBranch(branch.name)" target="_top">{{branch.name}}</a>
             </div>
             <div>
+                <span>{{branch.behindCount}} commits behind, {{branch.aheadCount}} ahead </span>
+            </div>
+            <div>
                 <!-- Avatar? -->
                 <!-- <img class="vss-Persona-content using-image" src="https://dev.azure.com/vv-ops/_apis/GraphProfile/MemberAvatars/msa.ZWQ4OTk4NjEtZjc5OS03NzNjLThiZWUtMGU4MmYyZWE0OGE1" alt=""> -->
                 <span>Created by {{branch.commit.author.name}} on {{branch.commit.author.date |
                     date:'mediumDate'}}</span>
             </div>
-            <div>
-                <span>{{branch.behindCount}} commits behind, {{branch.aheadCount}} ahead </span>
-            </div>
+
 
         </div>
 
@@ -49,8 +50,7 @@
                 <a [href]="getUrlForPullRequest(pr.pullRequestId)" target="_top">#{{pr.pullRequestId}} {{pr.title}}</a> 
                 
             </div>
-            <div>{{getStatus(pr.status)}} pull request into {{pr.targetRefName?.replace('refs/heads/', '')}}</div>
-
+            <div><span>{{pr.sourceRefName.replace('refs/heads/', '')}} into {{pr.targetRefName?.replace('refs/heads/', '')}}</span></div>
             <div>
                 <span *ngFor="let reviewer of pr.reviewers"><span
                         class="ms-Icons {{reviewer.vote | vote}}"></span><span>{{reviewer.displayName}}</span> &nbsp;

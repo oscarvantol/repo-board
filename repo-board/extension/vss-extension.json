@@ -2,12 +2,28 @@
     "manifestVersion": 1,
     "id": "repo-board",
     "publisher": "ovantol",
-    "version": "0.0.15",
+    "version": "0.0.18",
     "name": "repo-board",
     "description": "Branch and pull request overview for Azure DevOps",
     "demands": ["api-version/5.0"],
     "scopes": ["vso.code_manage"],
-    "public": false,
+    "public": true,
+    "repository": {
+        "type": "git",
+        "uri": "https://github.com/oscarvantol/repo-board"
+    },
+    "content": {
+        "details": {
+            "path": "overview.md"
+        },
+        "license": {
+            "path": "LICENSE"
+        }
+    },
+    "screenshots": [{
+        "path": "screenshots/screenshot1.png"
+      }
+    ],
     "categories": [
         "Azure Repos"
     ],
