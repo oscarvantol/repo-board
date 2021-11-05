@@ -15,21 +15,52 @@ a {
     margin-right: 10px;
 }
 
+.ms-Icon--Branch:before {
+    content: "\ebc2 ";
+}
+
+.ms-Icon--FavoriteStar:before {
+    content: "\e734 ";
+}
+
+.ms-Icon--FavoriteStarFill:before {
+    content: "\e735 ";
+}
+
 .ms-Icon--GitLogo:before {
     content: "\f65d ";
     color: #f05133;
-}
-
-.ms-Icon--Branch:before {
-    content: "\ebc2 ";
 }
 
 .ms-Icon--PullRequest:before {
     content: "\F296 ";
 }
 
+.bolt-button {
+    &.bolt-icon-button {
+        border: 0;
+        background: transparent;
+        padding: 8px;
+        &:hover {
+            background-color: rgba(var(--palette-neutral-6, 239, 239, 239), 1);
+        }
+    }
+}
+
+.favorite-star {
+    color: #ffbe00;
+}
+
+.fabric-icon {
+    align-self: center;
+    display: inline-flex;
+    font-family: "AzureDevOpsMDL2Assets";
+    -webkit-font-smoothing: antialiased;
+}
+
 .repo {
-    background-color: var(--background-color);
+    background-color: #fff;
+    background-color: var(--background-color, #fff);
     border: 0;
     border-radius: 4px;
     box-shadow: 0 3.2px 7.2px 0 var(--callout-shadow-color, rgba(0, 0, 0, .132)), 0 0.6px 1.8px 0 var(--callout-shadow-secondary-color, rgba(0, 0, 0, .108));
@@ -62,6 +93,13 @@ a {
             font-weight: normal;
             margin-left: 8px;
             padding: 4px 8px;
+        }
+        .fav {
+            margin-left: auto;
+        }
+        a {
+            color: rgba(0, 0, 0, .9);
+            &:hover {}
         }
     }
     .container {

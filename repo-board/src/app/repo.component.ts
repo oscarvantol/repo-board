@@ -15,17 +15,18 @@ export class RepoComponent implements OnInit {
         defaultBranch: "main"
     } as GitRepository;
 
-    gitBranches: GitBranchStats[] = [];
-    pullRequests: GitPullRequest[] = [];
+    public gitBranches: GitBranchStats[] = [];
+    public pullRequests: GitPullRequest[] = [];
 
-    constructor(public readonly repoService: RepoService) {}
+    constructor(public readonly repoService: RepoService) {
+    }
 
     async ngOnInit() {
         this.gitBranches = await this.repoService.getBranches(this.gitRepository);
         this.pullRequests = await this.repoService.getPullRequests(this.gitRepository);
     }
 
-    getPullRequest(branchName: string): GitPullRequest | undefined {
+    getPullRequest(branchName: string) {
         return this.pullRequests.find(pr => pr.sourceRefName === `refs/heads/${branchName}`);
     }
 
@@ -40,15 +41,21 @@ export class RepoComponent implements OnInit {
         return "";
     }
 
-    getUrlForBranch(branchName: string): string {
+    getUrlForBranch(branchName: string) {
         return `${this.gitRepository.webUrl}?version=GB${branchName}`;
     }
 
-    getUrlForPullRequest(pullRequestId: number): string {
+    getUrlForPullRequest(pullRequestId: number) {
         return `${this.gitRepository.webUrl}/pullrequest/${pullRequestId}`;
     }
 
-    getUrlNewPullRequest(branchName: string): string {
+    getUrlNewPullRequest(branchName: string) {
         return `${this.gitRepository.webUrl}/pullrequestcreate?sourceRef=${branchName}`;
     }
+
+    public toggleFavorite = (repoId: string) =>
+        this.repoService.toggleFavorite(repoId);
+    
+    public isFavorite = (repoId: string) =>
+        this.repoService.isFavorite(repoId);
 }

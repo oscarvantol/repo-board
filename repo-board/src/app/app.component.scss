@@ -8,6 +8,31 @@
     h1 {
         font-size: 21px;
         font-weight: 600;
-        margin: 16px 0;
+        margin: 12px 0 20px;
+    }
+    .tabs {
+        display: flex;
+        flex-direction: row;
+        margin-bottom: 16px;
+        .tab {
+            cursor: pointer;
+            padding: 0 8px;
+            span {
+                align-items: center;
+                display: flex;
+                font-weight: normal;
+                height: 48px;
+            }
+            &.active {
+                span {
+                    border-bottom: 2px solid rgba(0, 120, 212, 1);
+                    border-bottom: 2px solid var(--communication-background, rgba(0, 120, 212, 1));
+                    font-weight: 600;
+                }
+            }
+            &.muted {
+                color: rgba(0, 0, 0, .24);
+            }
+        }
     }
 }
