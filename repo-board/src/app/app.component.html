@@ -1,4 +1,17 @@
 <div class="repositories" *ngIf="gitRepositories$ | async as gitRepositories">
     <h1>Repositories</h1>
+
+    <div class="tabs">
+        <span class="tab" [class.active]="view === 'all'" (click)="view = 'all'">
+            <span>All</span>
+        </span>
+        <span class="tab" [class.active]="view === 'favorites'" (click)="view = 'favorites'">
+            <span>Favorites</span>
+        </span>
+        <span class="tab muted" [class.active]="view === 'hidden'" (click)="view = 'hidden'">
+            <span>Hidden</span>
+        </span>
+    </div>
+
     <git-repo *ngFor="let gitRepository of gitRepositories" [git-repository]="gitRepository"></git-repo>
 </div>

@@ -19,11 +19,14 @@ export class RepoService {
   private _branches: GitBranchStats[] = [];
   private _pullRequests: GitPullRequest[] = [];
   private _gitClient?: GitRestClient;
+  private _favorites: string[] = [];
+
   public gitRepositories$: Observable<GitRepository[]> = of([]);
 
   constructor() {
     if (this.online)
       SDK.init();
+      this._favorites = JSON.parse(localStorage.getItem("repo-fav") ?? "[]") as string[];
   }
 
   public initialize = async () => this.online
@@ -82,4 +85,19 @@ export class RepoService {
       if (name1 < name2) return -1;
       return 0;
     });
+
+    public toggleFavorite(repoId: string) {
+      const idx = this._favorites.indexOf(repoId);
+      if (idx > -1) {
+          this._favorites.splice(idx, 1);
+      } else {
+          this._favorites.push(repoId);
+      }
+      localStorage.setItem("repo-fav", JSON.stringify(this._favorites));
+  }
+
+  public isFavorite(repoId: string) {
+      return this._favorites.indexOf(repoId) > -1;
+  }
+
 }
