@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as SDK from "azure-devops-extension-sdk";
-import { getClient, CommonServiceIds, IProjectPageService, } from "azure-devops-extension-api";
-import { GitRestClient, GitRepository, GitPullRequestSearchCriteria, PullRequestStatus, GitBranchStats, GitPullRequest } from "azure-devops-extension-api/Git";
+import { getClient, CommonServiceIds, IProjectPageService, IProjectInfo } from "azure-devops-extension-api";
+import { GitRestClient, GitRepository, GitPullRequestSearchCriteria, PullRequestStatus, GitBranchStats, GitPullRequest, GitRefFavorite } from "azure-devops-extension-api/Git";
 import { Observable, of } from 'rxjs';
 
 import RepositoriesJson from "../../assets/data/repositories.json";
@@ -20,13 +20,12 @@ export class RepoService {
   private _pullRequests: GitPullRequest[] = [];
   private _gitClient?: GitRestClient;
   private _favorites: string[] = [];
-
+  private _project: IProjectInfo | undefined;
   public gitRepositories$: Observable<GitRepository[]> = of([]);
 
   constructor() {
     if (this.online)
       SDK.init();
-      this._favorites = JSON.parse(localStorage.getItem("repo-fav") ?? "[]") as string[];
   }
 
   public initialize = async () => this.online
@@ -61,12 +60,13 @@ export class RepoService {
     await SDK.ready();
     const projectService = await SDK.getService<IProjectPageService>(CommonServiceIds.ProjectPageService);
     this._gitClient = getClient(GitRestClient);
-    const project = await projectService.getProject();
-    if (project === undefined)
+    this._project = await projectService.getProject();
+    if (this._project === undefined)
       throw ("Unable to load project");
 
-    const gitRepositories = await this._gitClient.getRepositories(project.id);
+    const gitRepositories = await this._gitClient.getRepositories(this._project.id);
     this.gitRepositories$ = of(this.getSortedList(gitRepositories));
+    this._favorites = await this.getFavorites(this._project.id);
   }
 
   private async initOffline() {
@@ -76,6 +76,7 @@ export class RepoService {
 
     this._branches = BranchesJson as any as GitBranchStats[];
     this._pullRequests = PullRequestsJson as any as GitPullRequest[];
+    this._favorites = JSON.parse(localStorage.getItem("repo-fav") ?? "[]") as string[];
   }
 
   private getSortedList = (repos: GitRepository[]) =>
@@ -86,18 +87,48 @@ export class RepoService {
       return 0;
     });
 
-    public toggleFavorite(repoId: string) {
-      const idx = this._favorites.indexOf(repoId);
-      if (idx > -1) {
-          this._favorites.splice(idx, 1);
+  public async toggleFavorite(repoId: string) {
+    const idx = this._favorites.indexOf(repoId);
+    const projectId = this._project?.id ?? "";
+
+    if (this.online) {
+      if (idx < 0) {
+        await this.addFavorite(projectId, repoId);
       } else {
-          this._favorites.push(repoId);
+        await this.removeFavorite(projectId, repoId);
       }
-      localStorage.setItem("repo-fav", JSON.stringify(this._favorites));
+
+      this._favorites = await this.getFavorites(projectId);
+      return;
+    }
+
+    //debug    
+    if (idx > -1) {
+      this._favorites.splice(idx, 1);
+    } else {
+      this._favorites.push(repoId);
+    }
+
+    localStorage.setItem("repo-fav", JSON.stringify(this._favorites));
   }
 
   public isFavorite(repoId: string) {
-      return this._favorites.indexOf(repoId) > -1;
+    return this._favorites.indexOf(repoId) > -1;
   }
 
+  public async getFavorites(projectId: string): Promise<string[]> {
+    var favorites = await this._gitClient?.getRefFavorites(projectId);
+    return favorites?.map(f => f.repositoryId) ?? [];
+  }
+
+  public async addFavorite(projectId: string, repoId: string) {
+    await this._gitClient?.createFavorite({ repositoryId: repoId } as GitRefFavorite, this._project?.id ?? "");
+  }
+
+  public async removeFavorite(projectId: string, repoId: string) {
+    var favorites = await this._gitClient?.getRefFavorites(projectId);
+    var favoriteId = favorites?.find(f => f.repositoryId == repoId)?.id;
+    if (favoriteId !== undefined)
+      await this._gitClient?.deleteRefFavorite(projectId, favoriteId);
+  }
 }
