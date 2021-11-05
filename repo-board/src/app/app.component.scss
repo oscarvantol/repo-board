@@ -31,7 +31,10 @@
                 }
             }
             &.muted {
-                color: rgba(0, 0, 0, .24);
+                opacity: .25;
+                &:hover {
+                    opacity: 1;
+                }
             }
         }
     }
