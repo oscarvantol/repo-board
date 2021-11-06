@@ -75,24 +75,22 @@ export class RepoService {
       throw ("Unable to load project");
 
     const gitRepositories = await this._gitClient.getRepositories(this._project.id);
-    this.gitRepositories$ = of(this.getSortedList(gitRepositories));
+    this.gitRepositories$ = of(gitRepositories.sort(this.sortRepositories));
   }
 
   private async initOffline() {
-
     const gitRepositories = RepositoriesJson as any as GitRepository[];
-    this.gitRepositories$ = of(this.getSortedList(gitRepositories));
+    this.gitRepositories$ = of(gitRepositories.sort(this.sortRepositories));
     this._branchesJson = BranchesJson as [];
     this._pullRequests = PullRequestsJson as any as GitPullRequest[];
   }
 
-  private getSortedList = (repos: GitRepository[]) =>
-    repos.sort((r1, r2) => {
-      const [name1, name2] = [r1.name?.toLocaleLowerCase(), r2.name?.toLocaleLowerCase()];
+  private sortRepositories = (repoA: GitRepository, repoB: GitRepository) => {
+      const [name1, name2] = [repoA.name?.toLocaleLowerCase(), repoB.name?.toLocaleLowerCase()];
       if (name1 > name2) return 1;
       if (name1 < name2) return -1;
       return 0;
-    });
+    };
 
   public async toggleFavorite(repoId: string) {
     const idx = this._favorites.indexOf(repoId);

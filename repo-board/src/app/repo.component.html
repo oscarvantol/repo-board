@@ -32,8 +32,7 @@
             <div>
                 <!-- Avatar? -->
                 <!-- <img class="vss-Persona-content using-image" src="https://dev.azure.com/vv-ops/_apis/GraphProfile/MemberAvatars/msa.ZWQ4OTk4NjEtZjc5OS03NzNjLThiZWUtMGU4MmYyZWE0OGE1" alt=""> -->
-                <span>Created by {{branch.commit.author.name}} on {{branch.commit.author.date |
-                    date:'mediumDate'}}</span>
+                <span>Created by {{branch.commit.author.name}} on {{branch.commit.author.date | date: 'MMM d, yyyy (HH:mm)'}}</span>
             </div>
 
 
@@ -47,14 +46,19 @@
                 <a [href]="getUrlForPullRequest(pr.pullRequestId)" target="_top">#{{pr.pullRequestId}} {{pr.title}}</a>
 
             </div>
-            <div><span>{{pr.sourceRefName.replace('refs/heads/', '')}} into {{pr.targetRefName?.replace('refs/heads/', '')}}</span></div>
             <div>
-                <span *ngFor="let reviewer of pr.reviewers"><span
-                        class="ms-Icons {{reviewer.vote | vote}}"></span><span>{{reviewer.displayName}}</span> &nbsp;
-                </span>
-                <!-- <img class="vss-Persona-content using-image" src="{{reviewer._links.avatar.href}}"> -->
+                <span>{{pr.sourceRefName.replace('refs/heads/', '')}} into {{pr.targetRefName?.replace('refs/heads/', '')}}</span>
+                <ng-container *ngIf="getStatus(pr.status) as status">
+                    <span class="badge">{{status}}</span>
+                </ng-container>
             </div>
-
+            <div>
+                <span *ngFor="let reviewer of pr.reviewers">
+                    <!-- Avatar? -->
+                    <!-- <img class="vss-Persona-content using-image" src="{{reviewer._links.avatar.href ?? 'https://cdn.vsassets.io/v/M194_20211029.7/_content/notassigned-user.svg'}}"> -->
+                    <span class="ms-Icons {{reviewer.vote | vote}}"></span><span>{{reviewer.displayName}}</span> &nbsp;
+                </span>
+            </div>
         </div>
 
         <ng-template #elseBlock>

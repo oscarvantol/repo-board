@@ -42,6 +42,6 @@ export class AppComponent implements OnInit {
     await this.repoService.initialize();
     this.gitRepositories$ = this.repoService.gitRepositories$;
     if (this.repoService.hasFavorites())
-      this.view = 'favorites'
+      this.view = 'favorites';
   }
 }
