@@ -2,7 +2,7 @@
 
     {
         "id": "4a296ded-a5e2-4b30-bcda-aade34eaac40",
-        "name": "somecoolapp",
+        "name": "Some Cool App",
         "url": "https://dev.azure.com/oscarvantol/e2984392-20fa-41cd-906d-24f73152d985/_apis/git/repositories/4a296ded-a5e2-4b30-bcda-aade34eaac40",
         "project": {
             "id": "e2984392-20fa-41cd-906d-24f73152d985",
@@ -13,11 +13,31 @@
             "visibility": 0,
             "lastUpdateTime": "\/Date(1591646985577)\/"
         },
-        "defaultBranch": "refs/heads/master",
+        "defaultBranch": "refs/heads/main",
         "size": 148253,
         "remoteUrl": "https://oscarvantol@dev.azure.com/oscarvantol/TailwindTraders/_git/somecoolapp",
         "sshUrl": "git@ssh.dev.azure.com:v3/oscarvantol/TailwindTraders/somecoolapp",
         "webUrl": "https://dev.azure.com/oscarvantol/TailwindTraders/_git/somecoolapp",
+        "isDisabled": false
+    },
+    {
+        "id": "4a296ded-a5e2-4b30-bcda-aade34eaac41",
+        "name": "Yet Another Cool App",
+        "url": "https://dev.azure.com/oscarvantol/e2984392-20fa-41cd-906d-24f73152d985/_apis/git/repositories/4a296ded-a5e2-4b30-bcda-aade34eaac41",
+        "project": {
+            "id": "e2984392-20fa-41cd-906d-24f73152d986",
+            "name": "RainMakers",
+            "url": "https://dev.azure.com/oscarvantol/_apis/projects/e2984392-20fa-41cd-906d-24f73152d986",
+            "state": 1,
+            "revision": 13,
+            "visibility": 0,
+            "lastUpdateTime": "\/Date(1591646985577)\/"
+        },
+        "defaultBranch": "refs/heads/master",
+        "size": 145443,
+        "remoteUrl": "https://oscarvantol@dev.azure.com/oscarvantol//_git/yaca",
+        "sshUrl": "git@ssh.dev.azure.com:v3/oscarvantol/RainMakers/yaca",
+        "webUrl": "https://dev.azure.com/oscarvantol/RainMakers/_git/yaca",
         "isDisabled": false
     }
 ]

@@ -1,73 +1,75 @@
-[
-    {
-        "commit": {
-            "treeId": "6e594626d8877c41a0d9bd0dac97180ff5407394",
-            "commitId": "d3401b63ce2a2a6b5a673df69ee245aaf1976576",
-            "author": {
-                "name": "Oscar van Tol",
-                "email": "o.van.tol@betabit.nl",
-                "date": 1589307597000
+[{
+    "repositoryId": "4a296ded-a5e2-4b30-bcda-aade34eaac40",
+    "branches": [{
+            "commit": {
+                "treeId": "6e594626d8877c41a0d9bd0dac97180ff5407394",
+                "commitId": "d3401b63ce2a2a6b5a673df69ee245aaf1976576",
+                "author": {
+                    "name": "Oscar van Tol",
+                    "email": "o.van.tol@betabit.nl",
+                    "date": 1589307597000
+                },
+                "committer": {
+                    "name": "Oscar van Tol",
+                    "email": "o.van.tol@betabit.nl",
+                    "date": 1589307597000
+                },
+                "comment": "Initial checkin",
+                "parents": [
+                    "56b7e82b38eea19a1fe2573087ba14257cdc7686"
+                ],
+                "url": "https://dev.azure.com/oscarvantol/e2984392-20fa-41cd-906d-24f73152d985/_apis/git/repositories/4a296ded-a5e2-4b30-bcda-aade34eaac40/commits/d3401b63ce2a2a6b5a673df69ee245aaf1976576"
             },
-            "committer": {
-                "name": "Oscar van Tol",
-                "email": "o.van.tol@betabit.nl",
-                "date": 1589307597000
-            },
-            "comment": "Initial checkin",
-            "parents": [
-                "56b7e82b38eea19a1fe2573087ba14257cdc7686"
-            ],
-            "url": "https://dev.azure.com/oscarvantol/e2984392-20fa-41cd-906d-24f73152d985/_apis/git/repositories/4a296ded-a5e2-4b30-bcda-aade34eaac40/commits/d3401b63ce2a2a6b5a673df69ee245aaf1976576"
+            "name": "another-cool-feature",
+            "aheadCount": 0,
+            "behindCount": 0,
+            "isBaseVersion": true
         },
-        "name": "another-cool-feature",
-        "aheadCount": 0,
-        "behindCount": 0,
-        "isBaseVersion": true
-    },
-    {
-        "commit": {
-            "commitId": "6930cc04a93bd7091097cc9fe398039f6e25b827",
-            "author": {
-                "name": "Oscar van Tol",
-                "email": "o.van.tol@betabit.nl",
-                "date": 1635627134000
+        {
+            "commit": {
+                "commitId": "6930cc04a93bd7091097cc9fe398039f6e25b827",
+                "author": {
+                    "name": "Oscar van Tol",
+                    "email": "o.van.tol@betabit.nl",
+                    "date": 1635627134000
+                },
+                "committer": {
+                    "name": "Oscar van Tol",
+                    "email": "o.van.tol@betabit.nl",
+                    "date": 1635627134000
+                },
+                "comment": "Added a-change.html",
+                "url": "https://dev.azure.com/oscarvantol/e2984392-20fa-41cd-906d-24f73152d985/_apis/git/repositories/4a296ded-a5e2-4b30-bcda-aade34eaac40/commits/6930cc04a93bd7091097cc9fe398039f6e25b827"
             },
-            "committer": {
-                "name": "Oscar van Tol",
-                "email": "o.van.tol@betabit.nl",
-                "date": 1635627134000
-            },
-            "comment": "Added a-change.html",
-            "url": "https://dev.azure.com/oscarvantol/e2984392-20fa-41cd-906d-24f73152d985/_apis/git/repositories/4a296ded-a5e2-4b30-bcda-aade34eaac40/commits/6930cc04a93bd7091097cc9fe398039f6e25b827"
+            "name": "cool-feature",
+            "aheadCount": 1,
+            "behindCount": 0,
+            "isBaseVersion": false
         },
-        "name": "cool-feature",
-        "aheadCount": 1,
-        "behindCount": 0,
-        "isBaseVersion": false
-    },
-    {
-        "commit": {
-            "treeId": "6e594626d8877c41a0d9bd0dac97180ff5407394",
-            "commitId": "d3401b63ce2a2a6b5a673df69ee245aaf1976576",
-            "author": {
-                "name": "Oscar van Tol",
-                "email": "o.van.tol@betabit.nl",
-                "date": 1589307597000
+        {
+            "commit": {
+                "treeId": "6e594626d8877c41a0d9bd0dac97180ff5407394",
+                "commitId": "d3401b63ce2a2a6b5a673df69ee245aaf1976576",
+                "author": {
+                    "name": "Oscar van Tol",
+                    "email": "o.van.tol@betabit.nl",
+                    "date": 1589307597000
+                },
+                "committer": {
+                    "name": "Oscar van Tol",
+                    "email": "o.van.tol@betabit.nl",
+                    "date": 1589307597000
+                },
+                "comment": "Initial checkin",
+                "parents": [
+                    "56b7e82b38eea19a1fe2573087ba14257cdc7686"
+                ],
+                "url": "https://dev.azure.com/oscarvantol/e2984392-20fa-41cd-906d-24f73152d985/_apis/git/repositories/4a296ded-a5e2-4b30-bcda-aade34eaac40/commits/d3401b63ce2a2a6b5a673df69ee245aaf1976576"
             },
-            "committer": {
-                "name": "Oscar van Tol",
-                "email": "o.van.tol@betabit.nl",
-                "date": 1589307597000
-            },
-            "comment": "Initial checkin",
-            "parents": [
-                "56b7e82b38eea19a1fe2573087ba14257cdc7686"
-            ],
-            "url": "https://dev.azure.com/oscarvantol/e2984392-20fa-41cd-906d-24f73152d985/_apis/git/repositories/4a296ded-a5e2-4b30-bcda-aade34eaac40/commits/d3401b63ce2a2a6b5a673df69ee245aaf1976576"
-        },
-        "name": "master",
-        "aheadCount": 0,
-        "behindCount": 0,
-        "isBaseVersion": true
-    }
-]
+            "name": "main",
+            "aheadCount": 0,
+            "behindCount": 0,
+            "isBaseVersion": true
+        }
+    ]
+}]

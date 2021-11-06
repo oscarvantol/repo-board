@@ -8,6 +8,11 @@ import RepositoriesJson from "../../assets/data/repositories.json";
 import BranchesJson from "../../assets/data/branches.json";
 import PullRequestsJson from "../../assets/data/pullrequests.json";
 
+export interface RepoBranches {
+  repositoryId: string,
+  branches: GitBranchStats[]
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -16,7 +21,7 @@ export class RepoService {
     return document.domain !== "localhost";
   }
 
-  private _branches: GitBranchStats[] = [];
+  private _branchesJson: RepoBranches[] = [];
   private _pullRequests: GitPullRequest[] = [];
   private _gitClient?: GitRestClient;
   private _favorites: string[] = [];
@@ -39,7 +44,7 @@ export class RepoService {
       const gitClient = getClient(GitRestClient);
       gitBranches = await gitClient.getBranches(gitRepository.id);
     } else {
-      gitBranches = this._branches;
+      gitBranches = this._branchesJson.find(b => b.repositoryId === gitRepository.id)?.branches ?? [];
     }
 
     return gitBranches.filter((b) => `refs/heads/${b.name}` !== gitRepository.defaultBranch);
@@ -73,8 +78,7 @@ export class RepoService {
 
     const gitRepositories = RepositoriesJson as any as GitRepository[];
     this.gitRepositories$ = of(this.getSortedList(gitRepositories));
-
-    this._branches = BranchesJson as any as GitBranchStats[];
+    this._branchesJson = BranchesJson as [];
     this._pullRequests = PullRequestsJson as any as GitPullRequest[];
   }
 

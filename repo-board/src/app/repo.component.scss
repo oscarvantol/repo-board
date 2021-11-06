@@ -48,7 +48,11 @@ a {
 }
 
 .favorite-star {
-    color: #ffbe00;
+    color: rgba(0, 0, 0, .9);
+    color: var(--text-primary-color, rgba(0, 0, 0, .9));
+    &.active {
+        color: #ffbe00;
+    }
 }
 
 .fabric-icon {

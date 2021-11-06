@@ -8,12 +8,12 @@
             <ng-container *ngIf="isFavorite(gitRepository.id); then removeFavorite; else addFavorite"></ng-container>
 
             <ng-template #addFavorite>
-                <button class="bolt-button bolt-icon-button" tabindex="-1" type="button" (click)="toggleFavorite(gitRepository.id)">
+                <button class="bolt-button bolt-icon-button favorite-star" tabindex="-1" type="button" (click)="toggleFavorite(gitRepository.id)">
                     <span class="fabric-icon ms-Icon--FavoriteStar"></span>
                 </button>
             </ng-template>
             <ng-template #removeFavorite>
-                <button class="bolt-button bolt-icon-button favorite-star" tabindex="-1" type="button" (click)="toggleFavorite(gitRepository.id)">
+                <button class="bolt-button bolt-icon-button favorite-star active" tabindex="-1" type="button" (click)="toggleFavorite(gitRepository.id)">
                     <span aria-hidden="true" class="left-icon flex-noshrink fabric-icon ms-Icon--FavoriteStarFill medium"></span>
                 </button>
             </ng-template>
