@@ -48,7 +48,46 @@
             "commitId": "3af694c8c87a3ea20de038d9dfbb600a9a5ac43a",
             "url": "https://dev.azure.com/oscarvantol/e2984392-20fa-41cd-906d-24f73152d985/_apis/git/repositories/4a296ded-a5e2-4b30-bcda-aade34eaac40/commits/3af694c8c87a3ea20de038d9dfbb600a9a5ac43a"
         },
-        "reviewers": [],
+        "reviewers": [
+            {
+                "reviewerUrl": "https://dev.azure.com/bla",
+                "vote": 5,
+                "votedFor": [
+                   
+                ],
+                "hasDeclined": false,
+                "isFlagged": false,
+                "displayName": "John Doe",
+                "url": "https://spsprodweu2.vssps.visualstudio.com/",
+                "_links": {
+                    "avatar": {
+                        "href": "https://dev.azure.com/"
+                    }
+                },
+                "id": "292d55fb-956b-6730-8bb7-49a0f04f",
+                "uniqueName": "dude@example.com",
+                "imageUrl": "https://dev.azure.com/bla"
+            },
+            {
+                "reviewerUrl": "https://dev.azure.com/bla",
+                "vote": 10,
+                "votedFor": [
+                   
+                ],
+                "hasDeclined": false,
+                "isFlagged": false,
+                "displayName": "SteveO",
+                "url": "https://spsprodweu2.vssps.visualstudio.com/",
+                "_links": {
+                    "avatar": {
+                        "href": "https://dev.azure.com/"
+                    }
+                },
+                "id": "292d55fb-956b-6730-8bb7-49a0f04f",
+                "uniqueName": "dude2@example.com",
+                "imageUrl": "https://dev.azure.com/bla"
+            }
+        ],
         "url": "https://dev.azure.com/oscarvantol/e2984392-20fa-41cd-906d-24f73152d985/_apis/git/repositories/4a296ded-a5e2-4b30-bcda-aade34eaac40/pullRequests/1",
         "supportsIterations": true
     }

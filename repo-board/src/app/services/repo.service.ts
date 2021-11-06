@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
 import * as SDK from "azure-devops-extension-sdk";
-import { getClient, CommonServiceIds, IProjectPageService, } from "azure-devops-extension-api";
+import { getClient, CommonServiceIds, IProjectPageService, IProjectInfo } from "azure-devops-extension-api";
 import { GitRestClient, GitRepository, GitPullRequestSearchCriteria, PullRequestStatus, GitBranchStats, GitPullRequest } from "azure-devops-extension-api/Git";
 import { Observable, of } from 'rxjs';
 
 import RepositoriesJson from "../../assets/data/repositories.json";
 import BranchesJson from "../../assets/data/branches.json";
 import PullRequestsJson from "../../assets/data/pullrequests.json";
+import { ThisReceiver } from '@angular/compiler';
+
 
 export interface RepoBranches {
   repositoryId: string,
@@ -25,13 +27,15 @@ export class RepoService {
   private _pullRequests: GitPullRequest[] = [];
   private _gitClient?: GitRestClient;
   private _favorites: string[] = [];
-
+  private _project: IProjectInfo | undefined;
   public gitRepositories$: Observable<GitRepository[]> = of([]);
+
 
   constructor() {
     if (this.online)
       SDK.init();
-      this._favorites = JSON.parse(localStorage.getItem("repo-fav") ?? "[]") as string[];
+
+    this._favorites = JSON.parse(localStorage.getItem("repo-fav") ?? "[]") as string[];
   }
 
   public initialize = async () => this.online
@@ -66,11 +70,11 @@ export class RepoService {
     await SDK.ready();
     const projectService = await SDK.getService<IProjectPageService>(CommonServiceIds.ProjectPageService);
     this._gitClient = getClient(GitRestClient);
-    const project = await projectService.getProject();
-    if (project === undefined)
+    this._project = await projectService.getProject();
+    if (this._project === undefined)
       throw ("Unable to load project");
 
-    const gitRepositories = await this._gitClient.getRepositories(project.id);
+    const gitRepositories = await this._gitClient.getRepositories(this._project.id);
     this.gitRepositories$ = of(this.getSortedList(gitRepositories));
   }
 
@@ -90,18 +94,23 @@ export class RepoService {
       return 0;
     });
 
-    public toggleFavorite(repoId: string) {
-      const idx = this._favorites.indexOf(repoId);
-      if (idx > -1) {
-          this._favorites.splice(idx, 1);
-      } else {
-          this._favorites.push(repoId);
-      }
-      localStorage.setItem("repo-fav", JSON.stringify(this._favorites));
+  public async toggleFavorite(repoId: string) {
+    const idx = this._favorites.indexOf(repoId);
+
+    if (idx > -1) {
+      this._favorites.splice(idx, 1);
+    } else {
+      this._favorites.push(repoId);
+    }
+
+    localStorage.setItem("repo-fav", JSON.stringify(this._favorites));
   }
 
   public isFavorite(repoId: string) {
-      return this._favorites.indexOf(repoId) > -1;
+    return this._favorites.indexOf(repoId) > -1;
   }
 
+  public hasFavorites(): boolean {
+    return this._favorites.length > 0;
+  }
 }

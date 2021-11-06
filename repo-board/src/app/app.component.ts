@@ -15,10 +15,10 @@ export class AppComponent implements OnInit {
   public get view() {
     return this._view;
   }
-  
+
   public set view(value: ViewType) {
     if (this._view !== value) {
-      this._view = value;  
+      this._view = value;
       this.gitRepositories$ = this.repoService.gitRepositories$.pipe(map((g) => {
         switch (this.view) {
           case "favorites":
@@ -32,7 +32,7 @@ export class AppComponent implements OnInit {
       }));
     }
   }
-  
+
   public gitRepositories$: Observable<GitRepository[]> = of([]);
 
   constructor(private readonly repoService: RepoService) {
@@ -41,5 +41,7 @@ export class AppComponent implements OnInit {
   async ngOnInit() {
     await this.repoService.initialize();
     this.gitRepositories$ = this.repoService.gitRepositories$;
+    if (this.repoService.hasFavorites())
+      this.view = 'favorites'
   }
 }

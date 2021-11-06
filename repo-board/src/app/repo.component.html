@@ -13,8 +13,9 @@
                 </button>
             </ng-template>
             <ng-template #removeFavorite>
-                <button class="bolt-button bolt-icon-button favorite-star active" tabindex="-1" type="button" (click)="toggleFavorite(gitRepository.id)">
-                    <span aria-hidden="true" class="left-icon flex-noshrink fabric-icon ms-Icon--FavoriteStarFill medium"></span>
+                <button class="bolt-button bolt-icon-button favorite-star" tabindex="-1" type="button" (click)="toggleFavorite(gitRepository.id)">
+                    <span aria-hidden="true"
+                        class="left-icon flex-noshrink fabric-icon ms-Icon--FavoriteStarFill medium"></span>
                 </button>
             </ng-template>
         </div>
@@ -26,13 +27,16 @@
                 <span class="ms-Icons"><span aria-hidden="true" class="ms-Icon--Branch"></span></span><a [href]="getUrlForBranch(branch.name)" target="_top">{{branch.name}}</a>
             </div>
             <div>
-                <!-- Avatar? -->
-                <!-- <img class="vss-Persona-content using-image" src="https://dev.azure.com/vv-ops/_apis/GraphProfile/MemberAvatars/msa.ZWQ4OTk4NjEtZjc5OS03NzNjLThiZWUtMGU4MmYyZWE0OGE1" alt=""> -->
-                <span>Author: {{branch.commit.author.name}}</span>
+                <span>{{branch.behindCount}} commits behind, {{branch.aheadCount}} ahead </span>
             </div>
             <div>
-                <span>Date: {{branch.commit.author.date | date:'mediumDate'}}</span>
+                <!-- Avatar? -->
+                <!-- <img class="vss-Persona-content using-image" src="https://dev.azure.com/vv-ops/_apis/GraphProfile/MemberAvatars/msa.ZWQ4OTk4NjEtZjc5OS03NzNjLThiZWUtMGU4MmYyZWE0OGE1" alt=""> -->
+                <span>Created by {{branch.commit.author.name}} on {{branch.commit.author.date |
+                    date:'mediumDate'}}</span>
             </div>
+
+
         </div>
 
         <div *ngIf="getPullRequest(branch.name) let pr else elseBlock" class="item-pullrequest">
@@ -40,10 +44,17 @@
                 <span class="ms-Icons">
                     <span aria-hidden="true" class="ms-Icon--PullRequest"></span>
                 </span>
-                <a [href]="getUrlForPullRequest(pr.pullRequestId)" target="_top">{{pr.title}}</a>
+                <a [href]="getUrlForPullRequest(pr.pullRequestId)" target="_top">#{{pr.pullRequestId}} {{pr.title}}</a>
+
             </div>
-            <div>Merge into: {{pr.targetRefName?.replace('refs/heads/', '')}}</div>
-            <div class="status">Status: {{getStatus(pr.status)}}</div>
+            <div><span>{{pr.sourceRefName.replace('refs/heads/', '')}} into {{pr.targetRefName?.replace('refs/heads/', '')}}</span></div>
+            <div>
+                <span *ngFor="let reviewer of pr.reviewers"><span
+                        class="ms-Icons {{reviewer.vote | vote}}"></span><span>{{reviewer.displayName}}</span> &nbsp;
+                </span>
+                <!-- <img class="vss-Persona-content using-image" src="{{reviewer._links.avatar.href}}"> -->
+            </div>
+
         </div>
 
         <ng-template #elseBlock>

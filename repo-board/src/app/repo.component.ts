@@ -3,6 +3,7 @@ import { GitPullRequest, GitRepository, GitBranchStats, PullRequestStatus } from
 import { RepoService } from './services/repo.service';
 
 
+
 @Component({
     selector: 'git-repo',
     templateUrl: './repo.component.html',
