@@ -5,4 +5,4 @@ Repo Board is an alternative branch and pull request dashboard. This dashboard p
 After installing the extension it will show up under the 'Repos' menu.
 
 
-![repo-board](screenshots/screenshot1.png)
+![repo-board](https://raw.githubusercontent.com/oscarvantol/repo-board/main/repo-board/extension/screenshots/screenshot1.png)

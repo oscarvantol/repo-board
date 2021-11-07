@@ -28,6 +28,7 @@ export class RepoService {
   private _gitClient?: GitRestClient;
   private _favorites: string[] = [];
   private _project: IProjectInfo | undefined;
+  private _repoFavName: string = "repo-fav";
   public gitRepositories$: Observable<GitRepository[]> = of([]);
 
 
@@ -35,7 +36,7 @@ export class RepoService {
     if (this.online)
       SDK.init();
 
-    this._favorites = JSON.parse(localStorage.getItem("repo-fav") ?? "[]") as string[];
+
   }
 
   public initialize = async () => this.online
@@ -74,11 +75,14 @@ export class RepoService {
     if (this._project === undefined)
       throw ("Unable to load project");
 
+    this._repoFavName = `repo-fav-${this._project.id}`;
+    this._favorites = JSON.parse(localStorage.getItem(this._repoFavName) ?? "[]") as string[];
     const gitRepositories = await this._gitClient.getRepositories(this._project.id);
     this.gitRepositories$ = of(gitRepositories.sort(this.sortRepositories));
   }
 
   private async initOffline() {
+    this._favorites = JSON.parse(localStorage.getItem(this._repoFavName) ?? "[]") as string[];
     const gitRepositories = RepositoriesJson as any as GitRepository[];
     this.gitRepositories$ = of(gitRepositories.sort(this.sortRepositories));
     this._branchesJson = BranchesJson as [];
@@ -101,7 +105,7 @@ export class RepoService {
       this._favorites.push(repoId);
     }
 
-    localStorage.setItem("repo-fav", JSON.stringify(this._favorites));
+    localStorage.setItem(this._repoFavName, JSON.stringify(this._favorites));
   }
 
   public isFavorite(repoId: string) {
