@@ -2,7 +2,7 @@
     "manifestVersion": 1,
     "id": "repo-board",
     "publisher": "ovantol",
-    "version": "0.0.20",
+    "version": "0.0.21",
     "name": "repo-board",
     "description": "Branch and pull request overview for Azure DevOps",
     "demands": ["api-version/5.0"],
