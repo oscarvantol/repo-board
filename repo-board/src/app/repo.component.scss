@@ -48,8 +48,7 @@ a {
     color: rgb(var(--palette-accent2-dark, 16, 124, 16));
 }
 
-.ms-Icon--NoResponse:before {}
-
+// .ms-Icon--NoResponse:before {}
 .ms-Icon--Rejected:before {
     content: "\EB90 ";
     color: var(--component-status-error, rgba(205, 74, 69, 1))

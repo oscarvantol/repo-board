@@ -3,11 +3,11 @@ import * as SDK from "azure-devops-extension-sdk";
 import { getClient, CommonServiceIds, IProjectPageService, IProjectInfo } from "azure-devops-extension-api";
 import { GitRestClient, GitRepository, GitPullRequestSearchCriteria, PullRequestStatus, GitBranchStats, GitPullRequest } from "azure-devops-extension-api/Git";
 import { Observable, of } from 'rxjs';
+import { StorageHelper } from '../helpers/storageHelper';
 
 import RepositoriesJson from "../../assets/data/repositories.json";
 import BranchesJson from "../../assets/data/branches.json";
 import PullRequestsJson from "../../assets/data/pullrequests.json";
-import { ThisReceiver } from '@angular/compiler';
 
 
 export interface RepoBranches {
@@ -76,13 +76,18 @@ export class RepoService {
       throw ("Unable to load project");
 
     this._repoFavName = `repo-fav-${this._project.id}`;
-    this._favorites = JSON.parse(localStorage.getItem(this._repoFavName) ?? "[]") as string[];
+    this._favorites = StorageHelper.isLocalStorageAvailable()
+      ? JSON.parse(localStorage.getItem(this._repoFavName) ?? "[]") as string[]
+      : [];
     const gitRepositories = await this._gitClient.getRepositories(this._project.id);
     this.gitRepositories$ = of(gitRepositories.sort(this.sortRepositories));
   }
 
   private async initOffline() {
-    this._favorites = JSON.parse(localStorage.getItem(this._repoFavName) ?? "[]") as string[];
+    this._favorites = StorageHelper.isLocalStorageAvailable()
+      ? JSON.parse(localStorage.getItem(this._repoFavName) ?? "[]") as string[]
+      : [];
+
     const gitRepositories = RepositoriesJson as any as GitRepository[];
     this.gitRepositories$ = of(gitRepositories.sort(this.sortRepositories));
     this._branchesJson = BranchesJson as [];

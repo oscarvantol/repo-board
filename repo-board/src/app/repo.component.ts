@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { GitPullRequest, GitRepository, GitBranchStats, PullRequestStatus } from "azure-devops-extension-api/Git";
+import { StorageHelper } from './helpers/storageHelper';
 import { RepoService } from './services/repo.service';
 
 
@@ -18,6 +19,8 @@ export class RepoComponent implements OnInit {
 
     public gitBranches: GitBranchStats[] = [];
     public pullRequests: GitPullRequest[] = [];
+
+    public readonly StorageHelper = StorageHelper;
 
     constructor(public readonly repoService: RepoService) {
     }

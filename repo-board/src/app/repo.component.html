@@ -4,7 +4,7 @@
         <a class="title" [href]="gitRepository.webUrl" target="_top">{{gitRepository.name}}</a>
         <span class="badge">{{gitRepository.defaultBranch.replace('refs/heads/', '')}}</span>
 
-        <div class="fav">
+        <div class="fav" *ngIf="StorageHelper.isLocalStorageAvailable()">
             <ng-container *ngIf="isFavorite(gitRepository.id); then removeFavorite; else addFavorite"></ng-container>
 
             <ng-template #addFavorite>
