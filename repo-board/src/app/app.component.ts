@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { GitRepository } from 'azure-devops-extension-api/Git';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { StorageHelper } from './helpers/storageHelper';
 import { RepoService } from './services/repo.service';
 
 export type ViewType = "favorites" | "all" | "hidden";
@@ -12,6 +13,8 @@ export type ViewType = "favorites" | "all" | "hidden";
 })
 export class AppComponent implements OnInit {
   private _view: ViewType = "all";
+
+  public readonly StorageHelper = StorageHelper;
   public get view() {
     return this._view;
   }
@@ -42,6 +45,6 @@ export class AppComponent implements OnInit {
     await this.repoService.initialize();
     this.gitRepositories$ = this.repoService.gitRepositories$;
     if (this.repoService.hasFavorites())
-      this.view = 'favorites'
+      this.view = 'favorites';
   }
 }

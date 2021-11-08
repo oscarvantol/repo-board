@@ -3,12 +3,17 @@ import * as SDK from "azure-devops-extension-sdk";
 import { getClient, CommonServiceIds, IProjectPageService, IProjectInfo } from "azure-devops-extension-api";
 import { GitRestClient, GitRepository, GitPullRequestSearchCriteria, PullRequestStatus, GitBranchStats, GitPullRequest } from "azure-devops-extension-api/Git";
 import { Observable, of } from 'rxjs';
+import { StorageHelper } from '../helpers/storageHelper';
 
 import RepositoriesJson from "../../assets/data/repositories.json";
 import BranchesJson from "../../assets/data/branches.json";
 import PullRequestsJson from "../../assets/data/pullrequests.json";
-import { ThisReceiver } from '@angular/compiler';
 
+
+export interface RepoBranches {
+  repositoryId: string,
+  branches: GitBranchStats[]
+}
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +23,7 @@ export class RepoService {
     return document.domain !== "localhost";
   }
 
-  private _branches: GitBranchStats[] = [];
+  private _branchesJson: RepoBranches[] = [];
   private _pullRequests: GitPullRequest[] = [];
   private _gitClient?: GitRestClient;
   private _favorites: string[] = [];
@@ -44,7 +49,7 @@ export class RepoService {
       const gitClient = getClient(GitRestClient);
       gitBranches = await gitClient.getBranches(gitRepository.id);
     } else {
-      gitBranches = this._branches;
+      gitBranches = this._branchesJson.find(b => b.repositoryId === gitRepository.id)?.branches ?? [];
     }
 
     return gitBranches.filter((b) => `refs/heads/${b.name}` !== gitRepository.defaultBranch);
@@ -71,27 +76,30 @@ export class RepoService {
       throw ("Unable to load project");
 
     this._repoFavName = `repo-fav-${this._project.id}`;
-    this._favorites = JSON.parse(localStorage.getItem(this._repoFavName) ?? "[]") as string[];
+    this._favorites = StorageHelper.isLocalStorageAvailable()
+      ? JSON.parse(localStorage.getItem(this._repoFavName) ?? "[]") as string[]
+      : [];
     const gitRepositories = await this._gitClient.getRepositories(this._project.id);
-    this.gitRepositories$ = of(this.getSortedList(gitRepositories));
+    this.gitRepositories$ = of(gitRepositories.sort(this.sortRepositories));
   }
 
   private async initOffline() {
-    this._favorites = JSON.parse(localStorage.getItem(this._repoFavName) ?? "[]") as string[];
-    const gitRepositories = RepositoriesJson as any as GitRepository[];
-    this.gitRepositories$ = of(this.getSortedList(gitRepositories));
+    this._favorites = StorageHelper.isLocalStorageAvailable()
+      ? JSON.parse(localStorage.getItem(this._repoFavName) ?? "[]") as string[]
+      : [];
 
-    this._branches = BranchesJson as any as GitBranchStats[];
+    const gitRepositories = RepositoriesJson as any as GitRepository[];
+    this.gitRepositories$ = of(gitRepositories.sort(this.sortRepositories));
+    this._branchesJson = BranchesJson as [];
     this._pullRequests = PullRequestsJson as any as GitPullRequest[];
   }
 
-  private getSortedList = (repos: GitRepository[]) =>
-    repos.sort((r1, r2) => {
-      const [name1, name2] = [r1.name?.toLocaleLowerCase(), r2.name?.toLocaleLowerCase()];
+  private sortRepositories = (repoA: GitRepository, repoB: GitRepository) => {
+      const [name1, name2] = [repoA.name?.toLocaleLowerCase(), repoB.name?.toLocaleLowerCase()];
       if (name1 > name2) return 1;
       if (name1 < name2) return -1;
       return 0;
-    });
+    };
 
   public async toggleFavorite(repoId: string) {
     const idx = this._favorites.indexOf(repoId);

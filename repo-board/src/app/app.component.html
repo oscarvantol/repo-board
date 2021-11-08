@@ -5,12 +5,12 @@
         <span class="tab" [class.active]="view === 'all'" (click)="view = 'all'">
             <span>All</span>
         </span>
-        <span class="tab" [class.active]="view === 'favorites'" (click)="view = 'favorites'">
+        <span class="tab" [class.active]="view === 'favorites'" (click)="view = 'favorites'" *ngIf="StorageHelper.isLocalStorageAvailable()">
             <span>Favorites</span>
         </span>
-        <span class="tab muted" [class.active]="view === 'hidden'" (click)="view = 'hidden'">
+        <!-- <span class="tab muted" [class.active]="view === 'hidden'" (click)="view = 'hidden'">
             <span>Hidden</span>
-        </span>
+        </span> -->
     </div>
 
     <git-repo *ngFor="let gitRepository of gitRepositories" [git-repository]="gitRepository"></git-repo>

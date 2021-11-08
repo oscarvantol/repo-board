@@ -8,7 +8,7 @@
     h1 {
         font-size: 21px;
         font-weight: 600;
-        margin: 12px 0 20px;
+        margin: 12px 0 10px;
     }
     .tabs {
         display: flex;
@@ -21,7 +21,7 @@
                 align-items: center;
                 display: flex;
                 font-weight: normal;
-                height: 48px;
+                height: 46px;
             }
             &.active {
                 span {
