@@ -1,9 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { GitPullRequest, GitRepository, GitBranchStats, PullRequestStatus } from "azure-devops-extension-api/Git";
-import { StorageHelper } from './helpers/storageHelper';
 import { RepoService } from './services/repo.service';
-
-
 
 @Component({
     selector: 'git-repo',
@@ -19,8 +16,8 @@ export class RepoComponent implements OnInit {
 
     public gitBranches: GitBranchStats[] = [];
     public pullRequests: GitPullRequest[] = [];
-
-    public readonly StorageHelper = StorageHelper;
+    public groupName: string = "";
+    public editGroup: boolean = false;
 
     constructor(public readonly repoService: RepoService) {
     }
@@ -28,6 +25,7 @@ export class RepoComponent implements OnInit {
     async ngOnInit() {
         this.gitBranches = await this.repoService.getBranches(this.gitRepository);
         this.pullRequests = await this.repoService.getPullRequests(this.gitRepository);
+        this.groupName = this.repoService.getGroup(this.gitRepository.id);
     }
 
     getPullRequest(branchName: string) {
@@ -57,9 +55,16 @@ export class RepoComponent implements OnInit {
         return `${this.gitRepository.webUrl}/pullrequestcreate?sourceRef=${branchName}`;
     }
 
-    public toggleFavorite = (repoId: string) =>
-        this.repoService.toggleFavorite(repoId);
-    
+    public async toggleFavorite(repoId: string) {
+        await this.repoService.setFavorite(repoId, !this.isFavorite(repoId));
+    }
+
     public isFavorite = (repoId: string) =>
         this.repoService.isFavorite(repoId);
+
+    public saveGroupName() {
+        this.editGroup = false;
+        this.repoService.setGroup(this.gitRepository.id, this.groupName);
+    }
+
 }

@@ -1,13 +1,13 @@
 {
     "manifestVersion": 1,
-    "id": "repo-board",
+    "id": "repo-board-pre",
     "publisher": "ovantol",
-    "version": "0.0.21",
-    "name": "repo-board",
+    "version": "0.1.4",
+    "name": "repo-board-pre",
     "description": "Branch and pull request overview for Azure DevOps",
     "demands": ["api-version/5.0"],
     "scopes": ["vso.code_manage"],
-    "public": true,
+    "public": false,
     "repository": {
         "type": "git",
         "uri": "https://github.com/oscarvantol/repo-board"

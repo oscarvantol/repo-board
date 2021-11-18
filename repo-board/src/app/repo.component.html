@@ -2,18 +2,25 @@
     <div class="header">
         <span class="ms-Icons"><span aria-hidden="true" class="ms-Icon--GitLogo"></span></span>
         <a class="title" [href]="gitRepository.webUrl" target="_top">{{gitRepository.name}}</a>
-        <span class="badge">{{gitRepository.defaultBranch.replace('refs/heads/', '')}}</span>
+        <!-- <span class="badge">{{gitRepository.defaultBranch.replace('refs/heads/', '')}}</span> -->
 
-        <div class="fav" *ngIf="StorageHelper.isLocalStorageAvailable()">
+        <div>
+            <span class="badge clickable" title="click to set the groupname" *ngIf="!editGroup" (click)="editGroup=true">{{(groupName??"").length > 0?groupName:"+"}}</span>
+            <input class="badge" *ngIf="editGroup" autofocus [(ngModel)]="groupName" (blur)="saveGroupName()">
+        </div>
+
+        <div class="fav">
             <ng-container *ngIf="isFavorite(gitRepository.id); then removeFavorite; else addFavorite"></ng-container>
 
             <ng-template #addFavorite>
-                <button class="bolt-button bolt-icon-button favorite-star" tabindex="-1" type="button" (click)="toggleFavorite(gitRepository.id)">
+                <button class="bolt-button bolt-icon-button favorite-star clickable" tabindex="-1" type="button"
+                    (click)="toggleFavorite(gitRepository.id)">
                     <span class="fabric-icon ms-Icon--FavoriteStar"></span>
                 </button>
             </ng-template>
             <ng-template #removeFavorite>
-                <button class="bolt-button bolt-icon-button favorite-star active" tabindex="-1" type="button" (click)="toggleFavorite(gitRepository.id)">
+                <button class="bolt-button bolt-icon-button favorite-star active clickable" tabindex="-1" type="button"
+                    (click)="toggleFavorite(gitRepository.id)">
                     <span aria-hidden="true"
                         class="left-icon flex-noshrink fabric-icon ms-Icon--FavoriteStarFill medium"></span>
                 </button>
@@ -24,7 +31,8 @@
     <div class="container" *ngFor="let branch of gitBranches">
         <div class="item-branch">
             <div>
-                <span class="ms-Icons"><span aria-hidden="true" class="ms-Icon--Branch"></span></span><a [href]="getUrlForBranch(branch.name)" target="_top">{{branch.name}}</a>
+                <span class="ms-Icons"><span aria-hidden="true" class="ms-Icon--Branch"></span></span><a
+                    [href]="getUrlForBranch(branch.name)" target="_top">{{branch.name}}</a>
             </div>
             <div>
                 <span>{{branch.behindCount}} commits behind, {{branch.aheadCount}} ahead </span>
@@ -32,7 +40,8 @@
             <div>
                 <!-- Avatar? -->
                 <!-- <img class="vss-Persona-content using-image" src="https://dev.azure.com/vv-ops/_apis/GraphProfile/MemberAvatars/msa.ZWQ4OTk4NjEtZjc5OS03NzNjLThiZWUtMGU4MmYyZWE0OGE1" alt=""> -->
-                <span>Created by {{branch.commit.author.name}} on {{branch.commit.author.date | date: 'MMM d, yyyy (HH:mm)'}}</span>
+                <span>Created by {{branch.commit.author.name}} on {{branch.commit.author.date | date: 'MMM d, yyyy
+                    (HH:mm)'}}</span>
             </div>
 
 
@@ -47,7 +56,8 @@
 
             </div>
             <div>
-                <span>{{pr.sourceRefName.replace('refs/heads/', '')}} into {{pr.targetRefName?.replace('refs/heads/', '')}}</span>
+                <span>{{pr.sourceRefName.replace('refs/heads/', '')}} into {{pr.targetRefName?.replace('refs/heads/',
+                    '')}}</span>
                 <ng-container *ngIf="getStatus(pr.status) as status">
                     <span class="badge">{{status}}</span>
                 </ng-container>
@@ -63,7 +73,8 @@
 
         <ng-template #elseBlock>
             <div class="item-pullrequest">
-                <a [href]="getUrlNewPullRequest(branch.name)" class="pr new" target="_top" *ngIf="branch.name != 'dev'">Create a pull request</a>
+                <a [href]="getUrlNewPullRequest(branch.name)" class="pr new" target="_top"
+                    *ngIf="branch.name != 'dev'">Create a pull request</a>
             </div>
         </ng-template>
     </div>
