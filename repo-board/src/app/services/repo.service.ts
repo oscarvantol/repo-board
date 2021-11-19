@@ -9,6 +9,7 @@ import BranchesJson from "../../assets/data/branches.json";
 import PullRequestsJson from "../../assets/data/pullrequests.json";
 import { RepoSettingsModel } from '../models/repo-settings.model';
 import _ from 'lodash';
+import { RepoFavoriteModel } from '../models/repo-favorite.model';
 
 
 export interface RepoBranches {
@@ -28,14 +29,23 @@ export class RepoService {
   private _pullRequests: GitPullRequest[] = [];
   private _gitClient?: GitRestClient;
   private _repoSettings: RepoSettingsModel[] = [];
+  private _repoFavs: RepoFavoriteModel[] = [];
   private _project: IProjectInfo | undefined;
+  private _user?: SDK.IUserContext;
   private _extensionDataManager?: IExtensionDataManager;
-  private _repoSettingsDocuments: string = "";
   public gitRepositories$: Observable<GitRepository[]> = of([]);
 
   constructor() {
     if (this.online)
       SDK.init();
+  }
+
+  private get repoSettingsContainerName(): string {
+    return `repo-settings-${this._project?.id}`;
+  }
+
+  private get repoFavsContainerName(): string {
+    return `repo-favs-${this._project?.id}-${this._user?.id}`;
   }
 
   public initialize = async () => this.online
@@ -70,16 +80,18 @@ export class RepoService {
     await SDK.ready();
 
     const projectService = await SDK.getService<IProjectPageService>(CommonServiceIds.ProjectPageService);
-    await this.initDataManager();
 
     this._gitClient = getClient(GitRestClient);
     this._project = await projectService.getProject();
     if (this._project === undefined)
       throw ("Unable to load project");
 
+    this._user = SDK.getUser();
+    await this.initDataManager();
+    this.reloadRepoSettings();
+    this.reloadRepoFavs();
     const gitRepositories = await this._gitClient.getRepositories(this._project.id);
     this.gitRepositories$ = of(gitRepositories.sort(this.sortRepositories));
-    this.reloadRepoSettings();
   }
 
   private async initOffline() {
@@ -100,7 +112,6 @@ export class RepoService {
     let dataService = await SDK.getService<IExtensionDataService>(CommonServiceIds.ExtensionDataService);
     let extensionContext = SDK.getExtensionContext();
     this._extensionDataManager = await dataService.getExtensionDataManager(`${extensionContext.publisherId}.${extensionContext.extensionId}`, await SDK.getAccessToken());
-    this._repoSettingsDocuments = `repository-settings-${this._project?.id}`
   }
 
   private async reloadRepoSettings() {
@@ -108,7 +119,18 @@ export class RepoService {
       return;
 
     try {
-      this._repoSettings = await this._extensionDataManager?.getDocuments(this._repoSettingsDocuments) as RepoSettingsModel[];
+      this._repoSettings = await this._extensionDataManager?.getDocuments(this.repoSettingsContainerName) as RepoSettingsModel[];
+    } catch (e) {
+      console.error("error fetching repoSettings", e);
+    }
+  }
+
+  private async reloadRepoFavs() {
+    if (!this.online)
+      return;
+
+    try {
+      this._repoFavs = await this._extensionDataManager?.getDocuments(this.repoFavsContainerName) as RepoFavoriteModel[];
     } catch (e) {
       console.error("error fetching repoSettings", e);
     }
@@ -119,11 +141,11 @@ export class RepoService {
   }
 
   public hasFavorites(): boolean {
-    return !_.find(this._repoSettings, r => r.favorite === true) === undefined;
+    return !_.find(this._repoFavs, r => r.isFavorite === true) === undefined;
   }
 
   public isFavorite(repoId: string): boolean {
-    return this.getOrCreateRepoSetting(repoId).favorite;
+    return this.getOrCreateRepoFav(repoId).isFavorite;
   }
 
   public getGroup(repoId: string): string {
@@ -131,12 +153,12 @@ export class RepoService {
   }
 
   public async setFavorite(repoId: string, favorite: boolean) {
-    await this.reloadRepoSettings();
-    const repoSetting = this.getOrCreateRepoSetting(repoId);
-    repoSetting.favorite = favorite;
+    await this.reloadRepoFavs();
+    const repoFav = this.getOrCreateRepoFav(repoId);
+    repoFav.isFavorite = favorite;
 
     if (this.online)
-      await this._extensionDataManager?.setDocument(this._repoSettingsDocuments, repoSetting);
+      await this._extensionDataManager?.setDocument(this.repoFavsContainerName, repoFav);
   }
 
   public async setGroup(repoId: string, groupName: string) {
@@ -145,7 +167,7 @@ export class RepoService {
     repoSetting.group = groupName;
 
     if (this.online)
-      await this._extensionDataManager?.setDocument(this._repoSettingsDocuments, repoSetting);
+      await this._extensionDataManager?.setDocument(this.repoSettingsContainerName, repoSetting);
   }
 
   private getOrCreateRepoSetting(repoId: string): RepoSettingsModel {
@@ -155,5 +177,14 @@ export class RepoService {
       this._repoSettings.push(repoSetting);
     }
     return repoSetting;
+  }
+
+  private getOrCreateRepoFav(repoId: string): RepoFavoriteModel {
+    let repoFav = _.find(this._repoFavs, s => s.repoId === repoId);
+    if (repoFav === undefined) {
+      repoFav = { repoId: repoId } as RepoFavoriteModel;
+      this._repoFavs.push(repoFav);
+    }
+    return repoFav;
   }
 }
