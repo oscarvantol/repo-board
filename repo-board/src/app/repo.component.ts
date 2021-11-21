@@ -17,15 +17,18 @@ export class RepoComponent implements OnInit {
     public gitBranches: GitBranchStats[] = [];
     public pullRequests: GitPullRequest[] = [];
     public groupName: string = "";
+    public hiddenBranches: string[] = [];
     public editGroup: boolean = false;
 
     constructor(public readonly repoService: RepoService) {
     }
 
     async ngOnInit() {
-        this.gitBranches = await this.repoService.getBranches(this.gitRepository);
-        this.pullRequests = await this.repoService.getPullRequests(this.gitRepository);
+       // this.hiddenBranches = this.repoService.getHiddenBranches(this.gitRepository.id) ?? [];
         this.groupName = this.repoService.getGroup(this.gitRepository.id);
+
+        this.gitBranches = (await this.repoService.getBranches(this.gitRepository));//.filter((b)=> this.hiddenBranches.indexOf(b.name) === -1);
+        this.pullRequests = await this.repoService.getPullRequests(this.gitRepository);
     }
 
     getPullRequest(branchName: string) {
@@ -67,4 +70,8 @@ export class RepoComponent implements OnInit {
         this.repoService.setGroup(this.gitRepository.id, this.groupName);
     }
 
+    public async hideBranch(branchName: string) {
+        await this.repoService.hideBranch(this.gitRepository.id, branchName);
+        this.ngOnInit();
+    }
 }

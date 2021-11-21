@@ -13,13 +13,9 @@ export type ViewType = "favorites" | "all" | string;
 })
 export class AppComponent implements OnInit {
   private _view: ViewType = "all";
-
+  
   public get view() {
     return this._view;
-  }
-
-  public get groupNames():string[] {
-    return this.repoService.getGroupNames();
   }
 
   public set view(value: ViewType) {
@@ -39,16 +35,20 @@ export class AppComponent implements OnInit {
   }
 
   public gitRepositories$: Observable<GitRepository[]> = of([]);
-
+  public groupNames: string[] = [];
+  
   constructor(private readonly repoService: RepoService) {
   }
 
   async ngOnInit() {
     await this.repoService.initialize();
+    
     this.gitRepositories$ = this.repoService.gitRepositories$;
     if (this.repoService.hasFavorites())
       this.view = 'favorites';
+
+      this.groupNames = this.repoService.getUniqueGroupNames();
   }
 
- 
+
 }

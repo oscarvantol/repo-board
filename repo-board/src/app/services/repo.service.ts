@@ -34,7 +34,7 @@ export class RepoService {
   private _user?: SDK.IUserContext;
   private _extensionDataManager?: IExtensionDataManager;
   public gitRepositories$: Observable<GitRepository[]> = of([]);
-
+  
   constructor() {
     if (this.online)
       SDK.init();
@@ -48,6 +48,7 @@ export class RepoService {
     return `repo-favs-${this._project?.id}-${this._user?.id}`;
   }
 
+  
   public initialize = async () => this.online
     ? this.initOnline()
     : this.initOffline();
@@ -123,6 +124,7 @@ export class RepoService {
     } catch (e) {
       console.error("error fetching repoSettings", e);
     }
+    
   }
 
   private async reloadRepoFavs() {
@@ -136,7 +138,7 @@ export class RepoService {
     }
   }
 
-  public getGroupNames(): string[] {
+  public getUniqueGroupNames(): string[] {
     return _.sortBy(_.uniq(_.map(this._repoSettings, s => s.group)), s => s);
   }
 
@@ -152,6 +154,10 @@ export class RepoService {
     return this.getOrCreateRepoSetting(repoId).group;
   }
 
+  public getHiddenBranches(repoId: string): string[] {
+    return this.getOrCreateRepoSetting(repoId).hiddenBranches;
+  }
+
   public async setFavorite(repoId: string, favorite: boolean) {
     await this.reloadRepoFavs();
     const repoFav = this.getOrCreateRepoFav(repoId);
@@ -165,6 +171,17 @@ export class RepoService {
     await this.reloadRepoSettings();
     const repoSetting = this.getOrCreateRepoSetting(repoId);
     repoSetting.group = groupName;
+
+    if (this.online)
+      await this._extensionDataManager?.setDocument(this.repoSettingsContainerName, repoSetting);
+  }
+
+  public async hideBranch(repoId: string, branchName: string) {
+    await this.reloadRepoSettings();
+    const repoSetting = this.getOrCreateRepoSetting(repoId);
+    if (repoSetting.hiddenBranches === undefined)
+      repoSetting.hiddenBranches = [];
+    repoSetting.hiddenBranches.push(branchName);
 
     if (this.online)
       await this._extensionDataManager?.setDocument(this.repoSettingsContainerName, repoSetting);
