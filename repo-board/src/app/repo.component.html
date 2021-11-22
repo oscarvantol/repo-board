@@ -1,10 +1,12 @@
 <div class="repo" [class.no-branches]="gitBranches?.length === 0">
+    
+    
     <div class="header">
         <span class="ms-Icons"><span aria-hidden="true" class="ms-Icon--GitLogo"></span></span>
         <a class="title" [href]="gitRepository.webUrl" target="_top">{{gitRepository.name}}</a>
         <!-- <span class="badge">{{gitRepository.defaultBranch.replace('refs/heads/', '')}}</span> -->
-
-        <div>
+        
+        <div >
             <span class="badge clickable" title="click to set the groupname" *ngIf="!editGroup"
                 (click)="editGroup=true">{{(groupName??"").length > 0?groupName:"+"}}</span>
             <input class="badge" *ngIf="editGroup" autofocus [(ngModel)]="groupName" (blur)="saveGroupName()"
@@ -12,17 +14,17 @@
         </div>
 
         <div class="fav">
-            <ng-container *ngIf="isFavorite(gitRepository.id); then removeFavorite; else addFavorite"></ng-container>
+            <ng-container *ngIf="isFavorite then removeFavorite; else addFavorite"></ng-container>
 
             <ng-template #addFavorite>
                 <button class="bolt-button bolt-icon-button favorite-star clickable" tabindex="-1" type="button"
-                    (click)="toggleFavorite(gitRepository.id)">
+                    (click)="toggleFavorite()">
                     <span class="fabric-icon ms-Icon--FavoriteStar"></span>
                 </button>
             </ng-template>
             <ng-template #removeFavorite>
                 <button class="bolt-button bolt-icon-button favorite-star active clickable" tabindex="-1" type="button"
-                    (click)="toggleFavorite(gitRepository.id)">
+                    (click)="toggleFavorite()">
                     <span aria-hidden="true"
                         class="left-icon flex-noshrink fabric-icon ms-Icon--FavoriteStarFill medium"></span>
                 </button>

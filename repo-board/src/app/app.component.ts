@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { Store } from '@ngxs/store';
 import { GitRepository } from 'azure-devops-extension-api/Git';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
-
+import { RepoStateActions } from './repo-state.actions';
+import { RepoState } from './repo.state';
 import { RepoService } from './services/repo.service';
 
 export type ViewType = "favorites" | "all" | string;
@@ -34,20 +36,18 @@ export class AppComponent implements OnInit {
     }
   }
 
-  public gitRepositories$: Observable<GitRepository[]> = of([]);
-  public groupNames: string[] = [];
-  
-  constructor(private readonly repoService: RepoService) {
+  public gitRepositories$: Observable<GitRepository[]>;
+  public groupNames$: Observable<string[]>;
+    
+  constructor(private readonly repoService: RepoService, private store:Store) {
+    this.gitRepositories$ = this.store.select(RepoState.repositories);
+    this.groupNames$ = this.store.select(RepoState.groupNames);
   }
+
 
   async ngOnInit() {
     await this.repoService.initialize();
-    
-    this.gitRepositories$ = this.repoService.gitRepositories$;
-    if (this.repoService.hasFavorites())
-      this.view = 'favorites';
-
-      this.groupNames = this.repoService.getUniqueGroupNames();
+    this.store.dispatch(RepoStateActions.Initialize);
   }
 
 

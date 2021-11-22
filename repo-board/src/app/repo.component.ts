@@ -1,5 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { Select, Store } from '@ngxs/store';
 import { GitPullRequest, GitRepository, GitBranchStats, PullRequestStatus } from "azure-devops-extension-api/Git";
+import { Observable, of } from 'rxjs';
+import { RepoSettingsModel } from './models/repo-settings.model';
+import { RepoStateActions } from './repo-state.actions';
+import { RepoState } from './repo.state';
 import { RepoService } from './services/repo.service';
 
 @Component({
@@ -17,15 +22,28 @@ export class RepoComponent implements OnInit {
     public gitBranches: GitBranchStats[] = [];
     public pullRequests: GitPullRequest[] = [];
     public groupName: string = "";
+    public isFavorite: boolean = false;
     public hiddenBranches: string[] = [];
     public editGroup: boolean = false;
 
-    constructor(public readonly repoService: RepoService) {
+    constructor(public readonly repoService: RepoService, private store: Store) {
+
     }
 
     async ngOnInit() {
-       // this.hiddenBranches = this.repoService.getHiddenBranches(this.gitRepository.id) ?? [];
-        this.groupName = this.repoService.getGroup(this.gitRepository.id);
+        this.store.select(RepoState.setting(this.gitRepository.id))
+            .subscribe(setting => {
+                this.groupName = setting?.group;
+                this.hiddenBranches = setting?.hiddenBranches ?? [];
+            });
+
+        this.store.select(RepoState.favorite(this.gitRepository.id))
+            .subscribe(favorite => {
+                this.isFavorite = !!favorite?.isFavorite;
+            });
+
+        // this.hiddenBranches = this.repoService.getHiddenBranches(this.gitRepository.id) ?? [];
+        // this.groupName = this.repoService.getGroup(this.gitRepository.id);
 
         this.gitBranches = (await this.repoService.getBranches(this.gitRepository));//.filter((b)=> this.hiddenBranches.indexOf(b.name) === -1);
         this.pullRequests = await this.repoService.getPullRequests(this.gitRepository);
@@ -58,16 +76,16 @@ export class RepoComponent implements OnInit {
         return `${this.gitRepository.webUrl}/pullrequestcreate?sourceRef=${branchName}`;
     }
 
-    public async toggleFavorite(repoId: string) {
-        await this.repoService.setFavorite(repoId, !this.isFavorite(repoId));
+    public async toggleFavorite() {
+        //await this.repoService.setFavorite(repoId, !this.isFavorite);
+        this.isFavorite = !this.isFavorite;
     }
 
-    public isFavorite = (repoId: string) =>
-        this.repoService.isFavorite(repoId);
-
     public saveGroupName() {
+        this.store.dispatch(new RepoStateActions.SetGroupName(this.gitRepository.id, this.groupName));
+
         this.editGroup = false;
-        this.repoService.setGroup(this.gitRepository.id, this.groupName);
+        //this.repoService.setGroup(this.gitRepository.id, this.groupName);
     }
 
     public async hideBranch(branchName: string) {
