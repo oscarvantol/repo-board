@@ -10,6 +10,7 @@ import PullRequestsJson from "../../assets/data/pullrequests.json";
 import { RepoSettingsModel } from '../models/repo-settings.model';
 import _ from 'lodash';
 import { RepoFavoriteModel } from '../models/repo-favorite.model';
+import { of } from 'rxjs/internal/observable/of';
 
 
 export interface RepoBranches {
