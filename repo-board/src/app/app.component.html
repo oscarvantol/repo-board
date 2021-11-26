@@ -1,15 +1,15 @@
 <div class="repositories" *ngIf="gitRepositories$ | async as gitRepositories">
     <h1>Repositories</h1>
     
-    <div class="tabs">
-        <span class="tab" [class.active]="view === 'all'" (click)="view = 'all'">
+    <div class="tabs" *ngIf="view$ | async as _view">
+        <span class="tab" [class.active]="_view === 'all'" (click)="setView('all')">
             <span>All</span>
         </span>
-        <span class="tab" [class.active]="view === 'favorites'" (click)="view = 'favorites'">
+        <span class="tab" [class.active]="_view === 'favorites'" (click)="setView('favorites')">
             <span>Favorites</span>
         </span>
-        <span class="tab" *ngFor="let groupName of groupNames$ | async" [class.active]="view === groupName"
-            (click)="view = groupName">
+        <span class="tab" *ngFor="let groupName of groupNames$ | async" [class.active]="_view === groupName"
+            (click)="setView(groupName)">
             <span>{{groupName}}</span>
         </span>
     </div>

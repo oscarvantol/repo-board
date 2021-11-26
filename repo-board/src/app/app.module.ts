@@ -6,7 +6,7 @@ import { NgxsModule } from '@ngxs/store';
 
 import { AppComponent } from './app.component';
 import { RepoComponent } from './repo.component';
-import { RepoState } from './repo.state';
+import { RepoState } from './state/repo.state';
 import { VotePipe } from './vote.pipe';
 
 @NgModule({
