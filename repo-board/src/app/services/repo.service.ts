@@ -65,13 +65,13 @@ export class RepoService {
     return gitBranches.filter((b) => `refs/heads/${b.name}` !== gitRepository.defaultBranch);
   }
 
-  public async getPullRequests(gitRepository: GitRepository) {
+  public async getPullRequests(gitRepositoryId: string) {
     var pullRequests: GitPullRequest[] = [];
     if (this.online) {
       const gitClient = getClient(GitRestClient);
-      pullRequests = await gitClient.getPullRequests(gitRepository.id, { status: PullRequestStatus.Active } as GitPullRequestSearchCriteria);
+      pullRequests = await gitClient.getPullRequests(gitRepositoryId, { status: PullRequestStatus.Active } as GitPullRequestSearchCriteria);
     } else {
-      pullRequests = this._pullRequests.filter(pr => pr.repository.id === gitRepository.id);
+      pullRequests = this._pullRequests.filter(pr => pr.repository.id === gitRepositoryId);
     }
 
     return pullRequests;

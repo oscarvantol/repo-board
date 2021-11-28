@@ -1,3 +1,4 @@
+import { GitRepository } from "azure-devops-extension-api/Git";
 
 export namespace RepoStateActions {
 
@@ -8,6 +9,18 @@ export namespace RepoStateActions {
     export class SetView {
         static readonly type = `[RepoStateActions] SetView`
         constructor(public view: "all" | "favorites" | string) {
+        }
+    }
+
+    export class LoadBranches {
+        static readonly type = `[RepoStateActions] LoadBranches`;
+        constructor(public repository: GitRepository) {
+        }
+    }
+
+    export class LoadPullRequests {
+        static readonly type = `[RepoStateActions] LoadPullRequests`;
+        constructor(public repositoryId: string) {
         }
     }
 

@@ -41,8 +41,20 @@ export class RepoComponent implements OnInit {
                 this.isFavorite = !!favorite?.isFavorite;
             });
 
-        this.gitBranches = (await this.repoService.getBranches(this.gitRepository));
-        this.pullRequests = await this.repoService.getPullRequests(this.gitRepository);
+        this.store.select(RepoState.branches(this.gitRepository.id))
+            .subscribe(branches => {
+                if (branches)
+                    this.gitBranches = branches;
+            });
+
+        this.store.select(RepoState.pullRequests(this.gitRepository.id))
+            .subscribe(pullRequests => {
+                if (pullRequests)
+                    this.pullRequests = pullRequests;
+            });
+
+        this.store.dispatch(new RepoStateActions.LoadBranches(this.gitRepository));
+        this.store.dispatch(new RepoStateActions.LoadPullRequests(this.gitRepository.id));
     }
 
     getPullRequest(branchName: string) {
@@ -83,6 +95,6 @@ export class RepoComponent implements OnInit {
 
     public async hideBranch(branchName: string) {
         // await this.repoService.hideBranch(this.gitRepository.id, branchName);
-        
+
     }
 }

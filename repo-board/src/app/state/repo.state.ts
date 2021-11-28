@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Action, createSelector, Selector, State, StateContext } from '@ngxs/store';
-import { GitRepository } from 'azure-devops-extension-api/Git';
+import { GitBranchStats, GitRepository, GitPullRequest } from 'azure-devops-extension-api/Git';
 import { RepoSettingsModel } from '../models/repo-settings.model';
 import { RepoStateActions } from './repo-state.actions';
 import { RepoService } from '../services/repo.service';
@@ -8,10 +8,13 @@ import { RepoService } from '../services/repo.service';
 import _ from 'lodash';
 import { RepoFavoriteModel } from '../models/repo-favorite.model';
 
+
 export interface RepoStateModel {
   settings: RepoSettingsModel[];
   repositories: GitRepository[];
   favorites: RepoFavoriteModel[];
+  branches: Map<string, GitBranchStats[]>;
+  pullRequests: Map<string, GitPullRequest[]>;
   view: "all" | "favorites" | string;
 }
 
@@ -21,6 +24,8 @@ export interface RepoStateModel {
     settings: [],
     favorites: [],
     repositories: [],
+    branches: new Map<string, GitBranchStats[]>(),
+    pullRequests: new Map<string, GitPullRequest[]>(),
     view: "all"
   }
 })
@@ -56,13 +61,25 @@ export class RepoState {
     });
   }
 
+  static branches(repoId: string) {
+    return createSelector([RepoState], (state: RepoStateModel) => {
+      return state.branches.get(repoId);
+    });
+  }
+
+  static pullRequests(repoId: string) {
+    return createSelector([RepoState], (state: RepoStateModel) => {
+      return state.pullRequests.get(repoId);
+    });
+  }
+
   @Selector()
   static groupNames(repoState: RepoStateModel) {
     return _.sortBy(_.uniq(_.map(repoState.settings, s => s.group)), s => s);
   }
 
   @Action(RepoStateActions.Initialize)
-  async add(ctx: StateContext<RepoStateModel>, _: RepoStateActions.Initialize) {
+  async initialize(ctx: StateContext<RepoStateModel>, _: RepoStateActions.Initialize) {
 
     const [repos, settings, favorites] = await Promise.all([this._repoService.getAllRepositories(), this._repoService.getRepoSettings(), this._repoService.getFavorites()]);
 
@@ -70,6 +87,24 @@ export class RepoState {
       repositories: repos,
       settings: settings,
       favorites: favorites
+    });
+  }
+
+  @Action(RepoStateActions.LoadBranches)
+  async loadBranches(ctx: StateContext<RepoStateModel>, action: RepoStateActions.LoadBranches) {
+    const branches = await this._repoService.getBranches(action.repository);
+
+    ctx.patchState({
+      branches: ctx.getState().branches.set(action.repository.id, branches)
+    });
+  }
+
+  @Action(RepoStateActions.LoadPullRequests)
+  async loadPullRequests(ctx: StateContext<RepoStateModel>, action: RepoStateActions.LoadPullRequests) {
+    const pullRequests = await this._repoService.getPullRequests(action.repositoryId);
+
+    ctx.patchState({
+      pullRequests: ctx.getState().pullRequests.set(action.repositoryId, pullRequests)
     });
   }
 
