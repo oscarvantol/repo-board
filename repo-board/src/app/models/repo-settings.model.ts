@@ -1,5 +1,5 @@
 export class RepoSettingsModel {
-    id: string | undefined;
+    id: string = "";
     group: string = "";
     hiddenBranches: string[] = [];
 }

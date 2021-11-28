@@ -1,4 +1,4 @@
 export class RepoFavoriteModel {
-    id: string | undefined;
+    id: string = "";
     isFavorite: boolean = false;
 }

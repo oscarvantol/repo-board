@@ -74,8 +74,9 @@ export class RepoState {
   }
 
   @Selector()
-  static groupNames(repoState: RepoStateModel) {
-    return _.sortBy(_.uniq(_.map(repoState.settings, s => s.group)), s => s);
+  static groupNames(repoState: RepoStateModel) {    
+    const settings = repoState.settings.filter(s => repoState.repositories.map(r => r.id).indexOf(s.id) >= 0);
+    return _.sortBy(_.uniq(_.map(settings, s => s.group)), s => s);
   }
 
   @Action(RepoStateActions.Initialize)
