@@ -37,10 +37,6 @@
             <div>
                 <span class="ms-Icons"><span aria-hidden="true" class="ms-Icon--Branch"></span></span><a
                     [href]="getUrlForBranch(branch.name)" target="_top">{{branch.name}}</a>
-
-                <button class="bolt-button bolt-icon-button active clickable" tabindex="-1" type="button" (click)="hideBranch(branch.name)">
-                    <span aria-hidden="true" class="left-icon flex-noshrink fabric-icon ms-Icon--Hide medium"></span>
-                </button>
             </div>
             <div>
                 <span>{{branch.behindCount}} commits behind, {{branch.aheadCount}} ahead </span>
