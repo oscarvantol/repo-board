@@ -67,6 +67,13 @@ export class RepoState {
     });
   }
 
+  static visibleBranches(repoId: string) {
+    return createSelector([RepoState], (state: RepoStateModel) => {
+      const hiddenBranches = state.settings.filter(s => s.id == repoId)[0]?.hiddenBranches ?? [];
+      return state.branches.get(repoId)?.filter(b => hiddenBranches.indexOf(b.name) == -1);
+    });
+  }
+
   static pullRequests(repoId: string) {
     return createSelector([RepoState], (state: RepoStateModel) => {
       return state.pullRequests.get(repoId);
@@ -74,7 +81,7 @@ export class RepoState {
   }
 
   @Selector()
-  static groupNames(repoState: RepoStateModel) {    
+  static groupNames(repoState: RepoStateModel) {
     const settings = repoState.settings.filter(s => repoState.repositories.map(r => r.id).indexOf(s.id) >= 0);
     return _.sortBy(_.uniq(_.map(settings, s => s.group)), s => s);
   }
@@ -116,11 +123,12 @@ export class RepoState {
     });
   }
 
-  @Action(RepoStateActions.SetGroupName)
-  async setGroupName(ctx: StateContext<RepoStateModel>, patch: RepoStateActions.SetGroupName) {
-    await this._repoService.saveRepoSetting({ id: patch.repositoryId, group: patch.groupName, hiddenBranches: [] } as RepoSettingsModel);
+  @Action(RepoStateActions.UpdateRepoSettings)
+  async setGroupName(ctx: StateContext<RepoStateModel>, patch: RepoStateActions.UpdateRepoSettings) {
+    await this._repoService.saveRepoSetting({ id: patch.repositoryId, group: patch.groupName, hiddenBranches: patch.hiddenBranches } as RepoSettingsModel);
     ctx.patchState({
-      settings: await this._repoService.getRepoSettings()
+      settings: await this._repoService.getRepoSettings(),
+      branches: ctx.getState().branches
     });
   }
 

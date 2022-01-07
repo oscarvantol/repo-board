@@ -1,16 +1,12 @@
 <div class="repo" [class.no-branches]="gitBranches?.length === 0">
-    
-    
     <div class="header">
         <span class="ms-Icons"><span aria-hidden="true" class="ms-Icon--GitLogo"></span></span>
         <a class="title" [href]="gitRepository.webUrl" target="_top">{{gitRepository.name}}</a>
         <!-- <span class="badge">{{gitRepository.defaultBranch.replace('refs/heads/', '')}}</span> -->
-        
-        <div >
-            <span class="badge clickable" title="click to set the groupname" *ngIf="!editGroup"
-                (click)="editGroup=true">{{(groupName??"").length > 0?groupName:"+"}}</span>
-            <input class="badge" *ngIf="editGroup" autofocus [(ngModel)]="groupName" (blur)="saveGroupName()"
-                (keydown.enter)="saveGroupName()">
+
+        <div>
+            <span class="badge clickable" title="click to set the groupname"
+                *ngIf="!editMode && groupName">{{groupName}}</span>
         </div>
 
         <div class="fav">
@@ -30,14 +26,29 @@
                 </button>
             </ng-template>
         </div>
+        <div>
+            <button class="bolt-button bolt-icon-button clickable" tabindex="-1" type="button" (click)="editMode=true">
+                <span class="fabric-icon ms-Icon--Settings"></span>
+            </button>
+        </div>
     </div>
-
+    <div class="container" *ngIf="editMode"> Group:
+        <div>
+            <input class="badge" placeholder="Enter a group name" [(ngModel)]="groupName">
+        </div>
+    </div>
+    <div class="container" *ngIf="editMode"> Hidden branches: 
+        <div class="badge" *ngFor="let hiddenBranch of hiddenBranches"><strong>{{hiddenBranch}}</strong> <a class="clickable" (click)="unhideBranch(hiddenBranch)"> X </a></div>
+    </div>
     <div class="container" *ngFor="let branch of gitBranches">
         <div class="item-branch">
+            <div *ngIf="editMode"><button (click)="hideBranch(branch.name)">Hide branch</button></div>
             <div>
                 <span class="ms-Icons"><span aria-hidden="true" class="ms-Icon--Branch"></span></span><a
                     [href]="getUrlForBranch(branch.name)" target="_top">{{branch.name}}</a>
+
             </div>
+
             <div>
                 <span>{{branch.behindCount}} commits behind, {{branch.aheadCount}} ahead </span>
             </div>
@@ -47,8 +58,6 @@
                 <span>Created by {{branch.commit.author.name}} on {{branch.commit.author.date | date: 'MMM d, yyyy
                     (HH:mm)'}}</span>
             </div>
-
-
         </div>
 
         <div *ngIf="getPullRequest(branch.name) let pr else elseBlock" class="item-pullrequest">
@@ -56,11 +65,13 @@
                 <span class="ms-Icons">
                     <span aria-hidden="true" class="ms-Icon--PullRequest"></span>
                 </span>
-                <a [href]="getUrlForPullRequest(pr.pullRequestId)" target="_top">#{{pr.pullRequestId}} {{pr.title}}</a>
+                <a [href]="getUrlForPullRequest(pr.pullRequestId)" target="_top">#{{pr.pullRequestId}}
+                    {{pr.title}}</a>
 
             </div>
             <div>
-                <span>{{pr.sourceRefName.replace('refs/heads/', '')}} into {{pr.targetRefName?.replace('refs/heads/',
+                <span>{{pr.sourceRefName.replace('refs/heads/', '')}} into
+                    {{pr.targetRefName?.replace('refs/heads/',
                     '')}}</span>
                 <ng-container *ngIf="getStatus(pr.status) as status">
                     <span class="badge">{{status}}</span>
@@ -70,7 +81,8 @@
                 <span *ngFor="let reviewer of pr.reviewers">
                     <!-- Avatar? -->
                     <!-- <img class="vss-Persona-content using-image" src="{{reviewer._links.avatar.href ?? 'https://cdn.vsassets.io/v/M194_20211029.7/_content/notassigned-user.svg'}}"> -->
-                    <span class="ms-Icons {{reviewer.vote | vote}}"></span><span>{{reviewer.displayName}}</span> &nbsp;
+                    <span class="ms-Icons {{reviewer.vote | vote}}"></span><span>{{reviewer.displayName}}</span>
+                    &nbsp;
                 </span>
             </div>
         </div>
@@ -81,5 +93,12 @@
                     *ngIf="branch.name != 'dev'">Create a pull request</a>
             </div>
         </ng-template>
+    </div>
+    <div *ngIf="editMode">
+        <div class="footer">
+            <div class="btn">
+                <button (click)="saveSettings()">Save</button>
+            </div>
+        </div>
     </div>
 </div>

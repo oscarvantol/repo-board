@@ -24,9 +24,9 @@ export namespace RepoStateActions {
         }
     }
 
-    export class SetGroupName {
-        static readonly type = `[RepoStateActions] SetGroupName`;
-        constructor(public repositoryId: string, public groupName: string) {
+    export class UpdateRepoSettings {
+        static readonly type = `[RepoStateActions] UpdateRepoSettings`;
+        constructor(public repositoryId: string, public groupName: string, public hiddenBranches: string[]) {
         }
     }
 

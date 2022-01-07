@@ -23,7 +23,8 @@ export class RepoComponent implements OnInit {
     public groupName: string = "";
     public isFavorite: boolean = false;
     public hiddenBranches: string[] = [];
-    public editGroup: boolean = false;
+    public editMode: boolean = false;
+
 
     constructor(public readonly repoService: RepoService, private store: Store) {
 
@@ -33,7 +34,7 @@ export class RepoComponent implements OnInit {
         this.store.select(RepoState.setting(this.gitRepository.id))
             .subscribe(setting => {
                 this.groupName = setting?.group;
-                this.hiddenBranches = setting?.hiddenBranches ?? [];
+                this.hiddenBranches = (setting?.hiddenBranches ?? []).filter(item => item?.length > 0);
             });
 
         this.store.select(RepoState.favorite(this.gitRepository.id))
@@ -41,7 +42,7 @@ export class RepoComponent implements OnInit {
                 this.isFavorite = !!favorite?.isFavorite;
             });
 
-        this.store.select(RepoState.branches(this.gitRepository.id))
+        this.store.select(RepoState.visibleBranches(this.gitRepository.id))
             .subscribe(branches => {
                 if (branches)
                     this.gitBranches = branches;
@@ -88,13 +89,20 @@ export class RepoComponent implements OnInit {
         this.store.dispatch(new RepoStateActions.SetFavorite(this.gitRepository.id, !this.isFavorite));
     }
 
-    public saveGroupName() {
-        this.store.dispatch(new RepoStateActions.SetGroupName(this.gitRepository.id, this.groupName));
-        this.editGroup = false;
+    public saveSettings() {
+        this.store.dispatch(new RepoStateActions.UpdateRepoSettings(this.gitRepository.id, this.groupName, this.hiddenBranches));
+        this.editMode = false;
     }
 
     public async hideBranch(branchName: string) {
-        // await this.repoService.hideBranch(this.gitRepository.id, branchName);
+        const index = this.hiddenBranches.indexOf(branchName);
+        if (index == -1)
+            this.hiddenBranches.push(branchName);
+    }
 
+    public unhideBranch(branchName: string) {
+        const index = this.hiddenBranches.indexOf(branchName);
+        if (index > -1)
+            this.hiddenBranches.splice(index, 1);
     }
 }

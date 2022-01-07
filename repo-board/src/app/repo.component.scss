@@ -25,6 +25,12 @@ a {
     content: "\e734 ";
 }
 
+.ms-Icon--Settings:before {
+    top: 1px;
+    position: relative;
+    content: "\e713 ";
+}
+
 .ms-Icon--FavoriteStarFill:before {
     content: "\e735 ";
 }
@@ -87,6 +93,8 @@ a {
     }
 }
 
+
+
 .fabric-icon {
     align-self: center;
     display: inline-flex;
@@ -137,6 +145,16 @@ a {
             color: rgba(0, 0, 0, .9);
             color: var(--text-primary-color, rgba(0, 0, 0, .9));
         }
+    }
+    .footer {
+        align-items: right;
+        display: flex;
+        font-weight: 600;
+        padding: 12px 16px;
+        .btn {
+            margin-left: auto;
+        }
+        
     }
     .badge {
         border: solid 1px #ccc;
