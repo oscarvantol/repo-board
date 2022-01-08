@@ -10,7 +10,7 @@ import PullRequestsJson from "../../assets/data/pullrequests.json";
 import { RepoSettingsModel } from '../models/repo-settings.model';
 import _ from 'lodash';
 import { RepoFavoriteModel } from '../models/repo-favorite.model';
-import { of } from 'rxjs/internal/observable/of';
+import { of } from 'rxjs';
 
 
 export interface RepoBranches {
@@ -154,7 +154,7 @@ export class RepoService {
   public async getFavorites(): Promise<RepoFavoriteModel[]> {
     if (this.online && this._extensionDataManager)
       try {
-        return await this._extensionDataManager?.getDocuments(this.repoFavsContainerName, { scopeType: "User"});
+        return await this._extensionDataManager?.getDocuments(this.repoFavsContainerName, { scopeType: "User" });
       } catch (e) {
         return [];
       }
