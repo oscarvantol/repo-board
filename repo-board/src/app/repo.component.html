@@ -37,8 +37,9 @@
             <input class="badge" placeholder="Enter a group name" [(ngModel)]="groupName">
         </div>
     </div>
-    <div class="container" *ngIf="editMode"> Hidden branches: 
-        <div class="badge" *ngFor="let hiddenBranch of hiddenBranches"><strong>{{hiddenBranch}}</strong> <a class="clickable" (click)="unhideBranch(hiddenBranch)"> X </a></div>
+    <div class="container" *ngIf="editMode"> Hidden branches:
+        <div class="badge" *ngFor="let hiddenBranch of hiddenBranches"><strong>{{hiddenBranch}}</strong> <a
+                class="clickable" (click)="unhideBranch(hiddenBranch)"> X </a></div>
     </div>
     <div class="container" *ngFor="let branch of gitBranches">
         <div class="item-branch">
@@ -65,18 +66,22 @@
                 <span class="ms-Icons">
                     <span aria-hidden="true" class="ms-Icon--PullRequest"></span>
                 </span>
-                <a [href]="getUrlForPullRequest(pr.pullRequestId)" target="_top">#{{pr.pullRequestId}}
-                    {{pr.title}}</a>
+                <a [href]="getUrlForPullRequest(pr.pullRequestId)"
+                    target="_top">#{{pr.pullRequestId}}&nbsp;{{pr.title}}</a>
+
+                <span class="badge" *ngIf="getStatus(pr.status) as status">{{status}}</span>
+                <span class="badge warning" *ngIf="pr.mergeStatus != PullRequestAsyncStatus.Conflicts">Conflict</span>
 
             </div>
             <div>
                 <span>{{pr.sourceRefName.replace('refs/heads/', '')}} into
                     {{pr.targetRefName?.replace('refs/heads/',
                     '')}}</span>
-                <ng-container *ngIf="getStatus(pr.status) as status">
-                    <span class="badge">{{status}}</span>
-                </ng-container>
             </div>
+            <div>
+                <span class="">Created by {{pr.createdBy.displayName}}</span>
+            </div>
+
             <div>
                 <span *ngFor="let reviewer of pr.reviewers">
                     <!-- Avatar? -->
@@ -97,7 +102,7 @@
     <div *ngIf="editMode">
         <div class="footer">
             <div class="btn">
-                <button (click)="reload()">Cancel</button> 
+                <button (click)="reload()">Cancel</button>
                 &nbsp;
                 <button (click)="saveSettings()">Save</button>
             </div>

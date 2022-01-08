@@ -1,10 +1,12 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Store } from '@ngxs/store';
-import { GitPullRequest, GitRepository, GitBranchStats, PullRequestStatus } from "azure-devops-extension-api/Git";
+import { GitPullRequest, GitRepository, GitBranchStats, PullRequestStatus,PullRequestAsyncStatus } from "azure-devops-extension-api/Git";
 
 import { RepoStateActions } from './state/repo-state.actions';
 import { RepoState } from './state/repo.state';
 import { RepoService } from './services/repo.service';
+
+
 
 @Component({
     selector: 'git-repo',
@@ -24,7 +26,7 @@ export class RepoComponent implements OnInit {
     public isFavorite: boolean = false;
     public hiddenBranches: string[] = [];
     public editMode: boolean = false;
-
+    public PullRequestAsyncStatus = PullRequestAsyncStatus;
 
     constructor(public readonly repoService: RepoService, private store: Store) {
 

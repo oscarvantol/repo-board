@@ -93,13 +93,13 @@ a {
     }
 }
 
-
-
 .fabric-icon {
     align-self: center;
     display: inline-flex;
     font-family: "AzureDevOpsMDL2Assets";
     -webkit-font-smoothing: antialiased;
+    color: rgba(0, 0, 0, .9);
+    color: var(--text-primary-color, rgba(0, 0, 0, .9));
 }
 
 .vss-Persona-content {
@@ -158,16 +158,21 @@ a {
     }
     .badge {
         border: solid 1px #ccc;
-        border-radius: 120px;
+        border-radius: 4px;
         font-size: 12px;
         font-weight: normal;
         margin-left: 8px;
-        padding: 4px 8px;
+        padding: 2px 4px;
+    }
+
+    .warning {
+        border-color: #f05133;
+        color:rgba(205, 74, 69, 1);
+        font-weight: bolder;
     }
 
     .clickable {
         cursor: pointer;
-        
     }
 
     .container {
