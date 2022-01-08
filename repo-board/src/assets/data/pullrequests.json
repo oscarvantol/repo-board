@@ -29,10 +29,10 @@
             "descriptor": "msa.MzYwYTNlMTctMjY4NC03YzI1LTg3MDctN2YyODk2M2MxZTM0"
         },
         "creationDate": "1635627141888",
-        "title": "cool-feature-into-master",
+        "title": "cool-feature-into-main",
         "description": "Added a-change.html",
         "sourceRefName": "refs/heads/cool-feature",
-        "targetRefName": "refs/heads/master",
+        "targetRefName": "refs/heads/main",
         "mergeStatus": 3,
         "isDraft": false,
         "mergeId": "3d1f931f-7c8e-4e4f-bf8d-6de3f3623040",
