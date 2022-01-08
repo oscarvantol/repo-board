@@ -1,6 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { GitPullRequest, GitRepository, GitBranchStats, PullRequestStatus } from "azure-devops-extension-api/Git";
-import { StorageHelper } from './helpers/storageHelper';
+import { Store } from '@ngxs/store';
+import { GitPullRequest, GitRepository, GitBranchStats, PullRequestStatus,PullRequestAsyncStatus } from "azure-devops-extension-api/Git";
+
+import { RepoStateActions } from './state/repo-state.actions';
+import { RepoState } from './state/repo.state';
 import { RepoService } from './services/repo.service';
 
 
@@ -19,15 +22,42 @@ export class RepoComponent implements OnInit {
 
     public gitBranches: GitBranchStats[] = [];
     public pullRequests: GitPullRequest[] = [];
+    public groupName: string = "";
+    public isFavorite: boolean = false;
+    public hiddenBranches: string[] = [];
+    public editMode: boolean = false;
+    public PullRequestAsyncStatus = PullRequestAsyncStatus;
 
-    public readonly StorageHelper = StorageHelper;
+    constructor(public readonly repoService: RepoService, private store: Store) {
 
-    constructor(public readonly repoService: RepoService) {
     }
 
     async ngOnInit() {
-        this.gitBranches = await this.repoService.getBranches(this.gitRepository);
-        this.pullRequests = await this.repoService.getPullRequests(this.gitRepository);
+        this.store.select(RepoState.setting(this.gitRepository.id))
+            .subscribe(setting => {
+                this.groupName = setting?.group;
+                this.hiddenBranches = (setting?.hiddenBranches ?? []).filter(item => item?.length > 0);
+            });
+
+        this.store.select(RepoState.favorite(this.gitRepository.id))
+            .subscribe(favorite => {
+                this.isFavorite = !!favorite?.isFavorite;
+            });
+
+        this.store.select(RepoState.visibleBranches(this.gitRepository.id))
+            .subscribe(branches => {
+                if (branches)
+                    this.gitBranches = branches;
+            });
+
+        this.store.select(RepoState.pullRequests(this.gitRepository.id))
+            .subscribe(pullRequests => {
+                if (pullRequests)
+                    this.pullRequests = pullRequests;
+            });
+
+        this.store.dispatch(new RepoStateActions.LoadBranches(this.gitRepository));
+        this.store.dispatch(new RepoStateActions.LoadPullRequests(this.gitRepository.id));
     }
 
     getPullRequest(branchName: string) {
@@ -57,9 +87,29 @@ export class RepoComponent implements OnInit {
         return `${this.gitRepository.webUrl}/pullrequestcreate?sourceRef=${branchName}`;
     }
 
-    public toggleFavorite = (repoId: string) =>
-        this.repoService.toggleFavorite(repoId);
-    
-    public isFavorite = (repoId: string) =>
-        this.repoService.isFavorite(repoId);
+    public async toggleFavorite() {
+        this.store.dispatch(new RepoStateActions.SetFavorite(this.gitRepository.id, !this.isFavorite));
+    }
+
+    public saveSettings() {
+        this.store.dispatch(new RepoStateActions.UpdateRepoSettings(this.gitRepository.id, this.groupName, this.hiddenBranches));
+        this.editMode = false;
+    }
+
+    public reload(){
+        this.store.dispatch(RepoStateActions.ReloadSettings);
+        this.editMode = false;
+    }
+
+    public async hideBranch(branchName: string) {
+        const index = this.hiddenBranches.indexOf(branchName);
+        if (index == -1)
+            this.hiddenBranches.push(branchName);
+    }
+
+    public unhideBranch(branchName: string) {
+        const index = this.hiddenBranches.indexOf(branchName);
+        if (index > -1)
+            this.hiddenBranches.splice(index, 1);
+    }
 }

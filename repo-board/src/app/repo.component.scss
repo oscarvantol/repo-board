@@ -9,6 +9,21 @@ a {
     color: rgb(var(--palette-primary-shade-10, 0, 90, 158));
 }
 
+button {
+    background: none;
+    background-color: rgba(var(--palette-neutral-6, 239, 239, 239), 1); 
+    color: rgba(0, 0, 0, .9);
+    color: var(--text-primary-color, rgba(0, 0, 0, .9));
+    border: none;
+    padding: 4px 8px;
+    cursor: pointer;
+    &:hover {
+        background-color: rgba(0, 120, 212, 1);
+        background-color: var(--communication-background, rgba(0, 120, 212, 1));
+        color: #fff;
+    }
+}
+
 .ms-Icons {
     font-family: "AzureDevOpsMDL2Assets";
     -webkit-font-smoothing: antialiased;
@@ -25,7 +40,17 @@ a {
     content: "\e734 ";
 }
 
+.ms-Icon--Settings:before {
+    top: 1px;
+    position: relative;
+    content: "\e713 ";
+}
+
 .ms-Icon--FavoriteStarFill:before {
+    content: "\e735 ";
+}
+
+.ms-Icon--Hide:before {
     content: "\e735 ";
 }
 
@@ -75,19 +100,13 @@ a {
     }
 }
 
-.favorite-star {
-    color: rgba(0, 0, 0, .9);
-    color: var(--text-primary-color, rgba(0, 0, 0, .9));
-    &.active {
-        color: #ffbe00;
-    }
-}
-
 .fabric-icon {
     align-self: center;
     display: inline-flex;
     font-family: "AzureDevOpsMDL2Assets";
     -webkit-font-smoothing: antialiased;
+    color: rgba(0, 0, 0, .9);
+    color: var(--text-primary-color, rgba(0, 0, 0, .9));
 }
 
 .vss-Persona-content {
@@ -134,14 +153,35 @@ a {
             color: var(--text-primary-color, rgba(0, 0, 0, .9));
         }
     }
+    .footer {
+        align-items: right;
+        display: flex;
+        font-weight: 600;
+        padding: 12px 16px;
+        .btn {
+            margin-left: auto;
+        }
+        
+    }
     .badge {
         border: solid 1px #ccc;
-        border-radius: 120px;
+        border-radius: 4px;
         font-size: 12px;
         font-weight: normal;
         margin-left: 8px;
-        padding: 4px 8px;
+        padding: 2px 4px;
     }
+
+    .warning {
+        border-color: #f05133;
+        color:rgba(205, 74, 69, 1);
+        font-weight: bolder;
+    }
+
+    .clickable {
+        cursor: pointer;
+    }
+
     .container {
         display: flex;
         border-top: solid 1px #eee;

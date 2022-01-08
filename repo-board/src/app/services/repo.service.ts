@@ -1,13 +1,16 @@
 import { Injectable } from '@angular/core';
 import * as SDK from "azure-devops-extension-sdk";
-import { getClient, CommonServiceIds, IProjectPageService, IProjectInfo } from "azure-devops-extension-api";
+import { getClient, CommonServiceIds, IProjectPageService, IProjectInfo, IExtensionDataService, IExtensionDataManager } from "azure-devops-extension-api";
 import { GitRestClient, GitRepository, GitPullRequestSearchCriteria, PullRequestStatus, GitBranchStats, GitPullRequest } from "azure-devops-extension-api/Git";
-import { Observable, of } from 'rxjs';
-import { StorageHelper } from '../helpers/storageHelper';
+
 
 import RepositoriesJson from "../../assets/data/repositories.json";
 import BranchesJson from "../../assets/data/branches.json";
 import PullRequestsJson from "../../assets/data/pullrequests.json";
+import { RepoSettingsModel } from '../models/repo-settings.model';
+import _ from 'lodash';
+import { RepoFavoriteModel } from '../models/repo-favorite.model';
+import { of } from 'rxjs/internal/observable/of';
 
 
 export interface RepoBranches {
@@ -26,17 +29,24 @@ export class RepoService {
   private _branchesJson: RepoBranches[] = [];
   private _pullRequests: GitPullRequest[] = [];
   private _gitClient?: GitRestClient;
-  private _favorites: string[] = [];
   private _project: IProjectInfo | undefined;
-  private _repoFavName: string = "repo-fav";
-  public gitRepositories$: Observable<GitRepository[]> = of([]);
+  private _user?: SDK.IUserContext;
+  private _extensionDataManager?: IExtensionDataManager;
 
+  private _testDataRepoFavoriteModels = new Map<string, RepoFavoriteModel>();
+  private _testDataRepoSettingsModels = new Map<string, RepoSettingsModel>();
 
   constructor() {
     if (this.online)
       SDK.init();
+  }
 
+  private get repoSettingsContainerName(): string {
+    return `rs-${this._project?.id}`;
+  }
 
+  private get repoFavsContainerName(): string {
+    return `rf-${this._project?.id}-${this._user?.id}`;
   }
 
   public initialize = async () => this.online
@@ -55,13 +65,13 @@ export class RepoService {
     return gitBranches.filter((b) => `refs/heads/${b.name}` !== gitRepository.defaultBranch);
   }
 
-  public async getPullRequests(gitRepository: GitRepository) {
+  public async getPullRequests(gitRepositoryId: string) {
     var pullRequests: GitPullRequest[] = [];
     if (this.online) {
       const gitClient = getClient(GitRestClient);
-      pullRequests = await gitClient.getPullRequests(gitRepository.id, { status: PullRequestStatus.Active } as GitPullRequestSearchCriteria);
+      pullRequests = await gitClient.getPullRequests(gitRepositoryId, { status: PullRequestStatus.Active } as GitPullRequestSearchCriteria);
     } else {
-      pullRequests = this._pullRequests.filter(pr => pr.repository.id === gitRepository.id);
+      pullRequests = this._pullRequests.filter(pr => pr.repository.id === gitRepositoryId);
     }
 
     return pullRequests;
@@ -69,55 +79,87 @@ export class RepoService {
 
   private async initOnline() {
     await SDK.ready();
+
     const projectService = await SDK.getService<IProjectPageService>(CommonServiceIds.ProjectPageService);
+
     this._gitClient = getClient(GitRestClient);
     this._project = await projectService.getProject();
     if (this._project === undefined)
       throw ("Unable to load project");
 
-    this._repoFavName = `repo-fav-${this._project.id}`;
-    this._favorites = StorageHelper.isLocalStorageAvailable()
-      ? JSON.parse(localStorage.getItem(this._repoFavName) ?? "[]") as string[]
-      : [];
-    const gitRepositories = await this._gitClient.getRepositories(this._project.id);
-    this.gitRepositories$ = of(gitRepositories.sort(this.sortRepositories));
+    this._user = SDK.getUser();
+    await this.initDataManager();
+  }
+
+  public async getAllRepositories() {
+    if (this.online)
+      return (await this._gitClient?.getRepositories(this._project?.id ?? ""))?.sort();
+    else
+      return of(RepositoriesJson.sort() as any as GitRepository[]).toPromise();
   }
 
   private async initOffline() {
-    this._favorites = StorageHelper.isLocalStorageAvailable()
-      ? JSON.parse(localStorage.getItem(this._repoFavName) ?? "[]") as string[]
-      : [];
-
-    const gitRepositories = RepositoriesJson as any as GitRepository[];
-    this.gitRepositories$ = of(gitRepositories.sort(this.sortRepositories));
     this._branchesJson = BranchesJson as [];
     this._pullRequests = PullRequestsJson as any as GitPullRequest[];
   }
 
-  private sortRepositories = (repoA: GitRepository, repoB: GitRepository) => {
-      const [name1, name2] = [repoA.name?.toLocaleLowerCase(), repoB.name?.toLocaleLowerCase()];
-      if (name1 > name2) return 1;
-      if (name1 < name2) return -1;
-      return 0;
-    };
+  private async initDataManager() {
+    let dataService = await SDK.getService<IExtensionDataService>(CommonServiceIds.ExtensionDataService);
+    let extensionContext = SDK.getExtensionContext();
+    this._extensionDataManager = await dataService.getExtensionDataManager(`${extensionContext.publisherId}.${extensionContext.extensionId}`, await SDK.getAccessToken());
+  }
 
-  public async toggleFavorite(repoId: string) {
-    const idx = this._favorites.indexOf(repoId);
+  public async saveRepoSetting(repoSetting: RepoSettingsModel) {
+    if (this.online) {
+      try {
+        var current = await this._extensionDataManager?.getDocument(this.repoSettingsContainerName, repoSetting.id) as RepoSettingsModel;
+        current.group = repoSetting.group;
+        current.hiddenBranches = repoSetting.hiddenBranches;
+        repoSetting = current;
+      } catch (e) { }
 
-    if (idx > -1) {
-      this._favorites.splice(idx, 1);
+      await this._extensionDataManager?.setDocument(this.repoSettingsContainerName, repoSetting);
     } else {
-      this._favorites.push(repoId);
+      this._testDataRepoSettingsModels.set(repoSetting.id ?? "", repoSetting);
+    }
+  }
+
+  public async getRepoSettings(): Promise<RepoSettingsModel[]> {
+    if (this.online && this._extensionDataManager) {
+      try {
+        return await this._extensionDataManager?.getDocuments(this.repoSettingsContainerName) ?? of([]);
+      } catch (e) {
+        return [];
+      }
     }
 
-    localStorage.setItem(this._repoFavName, JSON.stringify(this._favorites));
+    return of(Array.from(this._testDataRepoSettingsModels.values())).toPromise();
   }
 
-  public isFavorite(repoId: string) {
-    return this._favorites.indexOf(repoId) > -1;
+  public async saveFavorite(repoFavorite: RepoFavoriteModel) {
+    if (this.online) {
+      try {
+        var current = await this._extensionDataManager?.getDocument(this.repoFavsContainerName, repoFavorite.id, { scopeType: "User" }) as RepoFavoriteModel;
+        current.isFavorite = repoFavorite.isFavorite;
+        repoFavorite = current;
+      }
+      catch (e) { }
+
+      await this._extensionDataManager?.setDocument(this.repoFavsContainerName, repoFavorite, { scopeType: "User" });
+    } else {
+      this._testDataRepoFavoriteModels.set(repoFavorite.id ?? "", repoFavorite);
+    }
   }
 
-  public hasFavorites(): boolean {
-    return this._favorites.length > 0;
+  public async getFavorites(): Promise<RepoFavoriteModel[]> {
+    if (this.online && this._extensionDataManager)
+      try {
+        return await this._extensionDataManager?.getDocuments(this.repoFavsContainerName, { scopeType: "User"});
+      } catch (e) {
+        return [];
+      }
+
+    return of(Array.from(this._testDataRepoFavoriteModels.values())).toPromise();
   }
+
 }
