@@ -30,6 +30,12 @@ export namespace RepoStateActions {
         }
     }
 
+    export class ReloadSettings {
+        static readonly type = `[RepoStateActions] ReloadSettings`;
+        constructor(public repositoryId: string) {
+        }
+    }
+
     export class SetFavorite {
         static readonly type = `[RepoStateActions] SetFavorite`;
         constructor(public repositoryId: string, public isFavorite: boolean) {

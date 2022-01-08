@@ -114,6 +114,7 @@ export class RepoService {
       try {
         var current = await this._extensionDataManager?.getDocument(this.repoSettingsContainerName, repoSetting.id) as RepoSettingsModel;
         current.group = repoSetting.group;
+        current.hiddenBranches = repoSetting.hiddenBranches;
         repoSetting = current;
       } catch (e) { }
 

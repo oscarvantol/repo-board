@@ -94,6 +94,11 @@ export class RepoComponent implements OnInit {
         this.editMode = false;
     }
 
+    public reload(){
+        this.store.dispatch(RepoStateActions.ReloadSettings);
+        this.editMode = false;
+    }
+
     public async hideBranch(branchName: string) {
         const index = this.hiddenBranches.indexOf(branchName);
         if (index == -1)

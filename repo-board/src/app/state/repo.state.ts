@@ -132,6 +132,14 @@ export class RepoState {
     });
   }
 
+  @Action(RepoStateActions.ReloadSettings)
+  async reloadSettings(ctx: StateContext<RepoStateModel>, patch: RepoStateActions.ReloadSettings) {
+    ctx.patchState({
+      settings: await this._repoService.getRepoSettings(),
+      branches: ctx.getState().branches
+    });
+  }
+
   @Action(RepoStateActions.SetFavorite)
   async setFavorite(ctx: StateContext<RepoStateModel>, patch: RepoStateActions.SetFavorite) {
     await this._repoService.saveFavorite({ id: patch.repositoryId, isFavorite: patch.isFavorite } as RepoFavoriteModel);

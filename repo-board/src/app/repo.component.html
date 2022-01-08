@@ -97,6 +97,8 @@
     <div *ngIf="editMode">
         <div class="footer">
             <div class="btn">
+                <button (click)="reload()">Cancel</button> 
+                &nbsp;
                 <button (click)="saveSettings()">Save</button>
             </div>
         </div>
