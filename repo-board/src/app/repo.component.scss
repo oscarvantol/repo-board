@@ -9,6 +9,21 @@ a {
     color: rgb(var(--palette-primary-shade-10, 0, 90, 158));
 }
 
+button {
+    background: none;
+    background-color: rgba(var(--palette-neutral-6, 239, 239, 239), 1); 
+    color: rgba(0, 0, 0, .9);
+    color: var(--text-primary-color, rgba(0, 0, 0, .9));
+    border: none;
+    padding: 4px 8px;
+    cursor: pointer;
+    &:hover {
+        background-color: rgba(0, 120, 212, 1);
+        background-color: var(--communication-background, rgba(0, 120, 212, 1));
+        color: #fff;
+    }
+}
+
 .ms-Icons {
     font-family: "AzureDevOpsMDL2Assets";
     -webkit-font-smoothing: antialiased;
@@ -82,14 +97,6 @@ a {
         &:hover {
             background-color: rgba(var(--palette-neutral-6, 239, 239, 239), 1);
         }
-    }
-}
-
-.favorite-star {
-    color: rgba(0, 0, 0, .9);
-    color: var(--text-primary-color, rgba(0, 0, 0, .9));
-    &.active {
-        color: #ffbe00;
     }
 }
 
