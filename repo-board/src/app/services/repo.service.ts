@@ -124,7 +124,7 @@ export class RepoService {
     }
   }
 
-  public async getRepoSettings(): Promise<RepoSettingsModel[]> {
+  public async getRepoSettings(): Promise<RepoSettingsModel[] | undefined> {
     if (this.online && this._extensionDataManager) {
       try {
         return await this._extensionDataManager?.getDocuments(this.repoSettingsContainerName) ?? of([]);
@@ -151,7 +151,7 @@ export class RepoService {
     }
   }
 
-  public async getFavorites(): Promise<RepoFavoriteModel[]> {
+  public async getFavorites(): Promise<RepoFavoriteModel[] | undefined> {
     if (this.online && this._extensionDataManager)
       try {
         return await this._extensionDataManager?.getDocuments(this.repoFavsContainerName, { scopeType: "User" });

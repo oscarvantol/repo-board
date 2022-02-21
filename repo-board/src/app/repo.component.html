@@ -12,20 +12,20 @@
 
             <ng-template #addFavorite>
                 <button class="bolt-button bolt-icon-button favorite-star clickable" tabindex="-1" type="button"
-                    (click)="toggleFavorite()">
+                    (click)="toggleFavorite()" aria-label="Toggle favorite">
                     <span class="fabric-icon ms-Icon--FavoriteStar"></span>
                 </button>
             </ng-template>
             <ng-template #removeFavorite>
                 <button class="bolt-button bolt-icon-button favorite-star active clickable" tabindex="-1" type="button"
-                    (click)="toggleFavorite()">
+                    (click)="toggleFavorite()" aria-label="Toggle favorite">
                     <span aria-hidden="true"
                         class="left-icon flex-noshrink fabric-icon ms-Icon--FavoriteStarFill medium"></span>
                 </button>
             </ng-template>
         </div>
         <div>
-            <button class="bolt-button bolt-icon-button clickable" tabindex="-1" type="button" (click)="editMode=true">
+            <button class="bolt-button bolt-icon-button clickable" tabindex="-1" type="button" (click)="editMode=true" aria-label="Settings">
                 <span class="fabric-icon ms-Icon--Settings"></span>
             </button>
         </div>
@@ -71,8 +71,7 @@
             </div>
             <div>
                 <span>{{pr.sourceRefName.replace('refs/heads/', '')}} into
-                    {{pr.targetRefName?.replace('refs/heads/',
-                    '')}}</span>
+                    {{pr.targetRefName?.replace('refs/heads/', '')}}</span>
             </div>
             <div>
                 <span class="">Created by {{pr.createdBy.displayName}}</span>
@@ -98,9 +97,9 @@
     <div *ngIf="editMode">
         <div class="footer">
             <div class="btn">
-                <button (click)="reload()">Cancel</button>
+                <button type="button" (click)="reload()">Cancel</button>
                 &nbsp;
-                <button (click)="saveSettings()">Save</button>
+                <button type="button" (click)="saveSettings()">Save</button>
             </div>
         </div>
     </div>
